@@ -1,43 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corso E-Learning – Get Certified & Accelerate Your Career</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo">Corso E-Learning</a>
+      <nav class="nav">
+        <a href="#features">Features</a>
+        <a href="#learners">Learners</a>
+        <a href="#cta" class="btn btn-outline">Get Started</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="hero-badge">4.8/5 Average Course Rating</p>
+        <h1 class="hero-title">
+          Get Certified & Accelerate Your Career By Learning <span class="highlight">2000+ Skills</span> For Free
+        </h1>
+        <p class="hero-subtitle">
+          Join thousands of learners. Earn certificates. Get placement support.
+        </p>
+        <div class="hero-cta">
+          <a href="#certificate" class="btn btn-primary">Start Learning Free</a>
+        </div>
+      </div>
+      <div class="hero-gradient"></div>
+    </section>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <section class="certificate" id="certificate">
+      <div class="container certificate-inner">
+        <h2 class="section-title">This Certificate Could Be Yours!</h2>
+        <div class="certificate-card">
+          <div class="certificate-visual">
+            <svg class="certificate-image" viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample Certificate">
+              <defs>
+                <linearGradient id="certBg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#0b1220" />
+                  <stop offset="1" stop-color="#0a0e17" />
+                </linearGradient>
+                <linearGradient id="certAccent" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#06b6d4" />
+                  <stop offset="1" stop-color="#67e8f9" />
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="800" height="560" rx="28" fill="url(#certBg)" />
+              <rect x="26" y="26" width="748" height="508" rx="22" fill="none" stroke="url(#certAccent)" stroke-width="4" />
+              <rect x="44" y="44" width="712" height="472" rx="18" fill="none" stroke="rgba(148,163,184,0.25)" stroke-width="2" stroke-dasharray="10 10" />
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+              <text x="400" y="140" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="44" font-weight="800" fill="#f1f5f9">Certificate of Completion</text>
+              <text x="400" y="200" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="20" font-weight="600" fill="#94a3b8">This is to certify that</text>
+              <text x="400" y="270" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="40" font-weight="800" fill="#ffffff">Your Name Here</text>
+              <text x="400" y="330" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="20" font-weight="600" fill="#94a3b8">has successfully completed</text>
+              <text x="400" y="390" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="28" font-weight="800" fill="#06b6d4">Skill Certified</text>
+
+              <text x="400" y="480" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="22" font-weight="700" fill="#94a3b8">Corso E-Learning</text>
+              <rect x="330" y="498" width="140" height="8" rx="4" fill="url(#certAccent)" opacity="0.75" />
+            </svg>
+          </div>
+          <div class="certificate-actions">
+            <p class="certificate-prompt">Sign up or log in to get started</p>
+            <button class="btn btn-google">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+              Continue with Google
+            </button>
+            <span class="divider">or</span>
+            <button class="btn btn-email">Login with Email</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <h2 class="section-title">Corso E-Learning is a Freemium Learning Platform That Provides</h2>
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-icon">★</div>
+            <h3>Top 1% Content</h3>
+            <p>Curated from across the world. No more time wasted looking for the best learning material.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">✓</div>
+            <h3>Certified Learning</h3>
+            <p>Assessments & Certification for 2170+ micro-skills across 210+ in-demand skill domains.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Get Paid to Learn</h3>
+            <p>Earn coins for learning & redeem them for cash rewards & even iPhones</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3>Placement Support</h3>
+            <p>Interview preparation, portfolio & CV guidance and access to our network of 900+ employers.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">🏢</div>
+            <h3>Industry Expert Led Workshops</h3>
+            <p>From Brands like Google and Facebook! Ask a doubt & get guaranteed responses.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Learn From Whatsapp</h3>
+            <p>Sign up and Learn On The Go And Get Certified Right Inside Your Whatsapp!</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="learners" id="learners">
+      <div class="container">
+        <h2 class="section-title">Our Learners Work At</h2>
+        <div class="learners-grid">
+          <div class="learner-card">
+            <div class="learner-avatar">KV</div>
+            <h4>Karthik V</h4>
+            <p class="learner-role">Senior Chief Engineer</p>
+            <p class="learner-company">Samsung R&D</p>
+          </div>
+          <div class="learner-card">
+            <div class="learner-avatar">AJ</div>
+            <h4>Aarti J.</h4>
+            <p class="learner-role">Senior Design Analyst</p>
+            <p class="learner-company">Tata Consultancy</p>
+          </div>
+          <div class="learner-card">
+            <div class="learner-avatar">VL</div>
+            <h4>Vellala Lalitha Somanath</h4>
+            <p class="learner-role">Analyst</p>
+            <p class="learner-company">Tech Mahindra</p>
+          </div>
+          <div class="learner-card">
+            <div class="learner-avatar">SK</div>
+            <h4>Sindhuja Kathirvelu</h4>
+            <p class="learner-role">Sr Specialist - Account Services</p>
+            <p class="learner-company">HCL Technologies</p>
+          </div>
+          <div class="learner-card">
+            <div class="learner-avatar">KK</div>
+            <h4>Krishan Kumar</h4>
+            <p class="learner-role">Research And Development Specialist</p>
+            <p class="learner-company">Daikin Airconditioning</p>
+          </div>
+          <div class="learner-card">
+            <div class="learner-avatar">RD</div>
+            <h4>Raghav Dubey</h4>
+            <p class="learner-role">Deputy Manager</p>
+            <p class="learner-company">Polycab Industries</p>
+          </div>
+          <div class="learner-card">
+            <div class="learner-avatar">AD</div>
+            <h4>Arpita Datta</h4>
+            <p class="learner-role">Manager</p>
+            <p class="learner-company">Lenskart</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured">
+      <div class="container">
+        <h2 class="section-title">We Have Been Featured In</h2>
+        <div class="featured-logos">
+          <svg class="featured-logo" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Featured Media 1">
+            <rect x="0.5" y="0.5" width="219" height="69" rx="14" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
+            <text x="110" y="44" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="20" font-weight="700" fill="#94a3b8">Media 1</text>
+          </svg>
+          <svg class="featured-logo" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Featured Media 2">
+            <rect x="0.5" y="0.5" width="219" height="69" rx="14" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
+            <text x="110" y="44" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="20" font-weight="700" fill="#94a3b8">Media 2</text>
+          </svg>
+          <svg class="featured-logo" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Featured Media 3">
+            <rect x="0.5" y="0.5" width="219" height="69" rx="14" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
+            <text x="110" y="44" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="20" font-weight="700" fill="#94a3b8">Media 3</text>
+          </svg>
+          <svg class="featured-logo" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Featured Media 4">
+            <rect x="0.5" y="0.5" width="219" height="69" rx="14" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
+            <text x="110" y="44" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="20" font-weight="700" fill="#94a3b8">Media 4</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="cta">
+      <div class="container cta-inner">
+        <h2 class="cta-title">What Are You Waiting For?</h2>
+        <a href="#certificate" class="btn btn-primary btn-lg">Get Started Free</a>
+        <p class="cta-brand">Corso E-Learning</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 ICTRD </p>
+    </div>
+  </footer>
+</body>
 </html>

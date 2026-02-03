@@ -1,17 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import './styles.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+(function () {
+  function init() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('.nav');
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    if (menuToggle && nav) {
+      menuToggle.addEventListener('click', function () {
+        nav.classList.toggle('is-open');
+        menuToggle.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+      });
+    }
+
+    // Close mobile nav when clicking a link
+    document.querySelectorAll('.nav a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        nav && nav.classList.remove('is-open');
+        menuToggle && menuToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
