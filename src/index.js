@@ -8,7 +8,7 @@ import './styles.css';
     const nav = document.querySelector('.nav');
     const header = document.querySelector('.header');
     const heroGradient = document.querySelector('.hero-gradient');
-    const root = document.documentElement;
+    
 
     if (menuToggle && nav) {
       menuToggle.addEventListener('click', function () {
