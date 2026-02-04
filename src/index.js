@@ -25,6 +25,22 @@ import './styles.css';
       });
     });
 
+    // Hero rotating text
+    const heroRotateEl = document.getElementById('heroRotateWord');
+    if (heroRotateEl && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const words = ['200+ Skills', 'Certificates', 'Courses'];
+      let idx = 0;
+      function rotateWord() {
+        heroRotateEl.classList.add('is-rotating');
+        setTimeout(function () {
+          idx = (idx + 1) % words.length;
+          heroRotateEl.textContent = words[idx];
+          heroRotateEl.classList.remove('is-rotating');
+        }, 400);
+      }
+      setInterval(rotateWord, 2800);
+    }
+
     // Scroll-driven UI polish (smooth + lightweight)
     const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let rafId = 0;
@@ -79,6 +95,7 @@ import './styles.css';
       '.feature-card',
       '.learner-card',
       '.featured-logo',
+      '.subpage-buttons-grid',
       '.cta-inner',
       '.footer',
     ];
