@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="header">
@@ -28,66 +29,66 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="container hero-inner">
-        <p class="hero-badge">4.8/5 Average Course Rating</p>
-        <h1 class="hero-title">
-          Get Certified & Accelerate Your Career By Learning
-          <span class="hero-rotate-wrap"><span class="hero-rotate-word" id="heroRotateWord" aria-live="polite">2000+ Skills</span></span>
-        </h1>
-        <p class="hero-subtitle">
-          Join thousands of learners. Earn certificates. Get placement support.
-        </p>
-        <div class="hero-cta">
-          <a href="#certificate" class="btn btn-primary">Start Learning Free</a>
+    <section class="hero hero-split">
+      <div class="container hero-inner hero-grid">
+        <div class="hero-content">
+          <p class="hero-badge">Instant Certificate</p>
+          <h1 class="hero-title">
+            Prove your skills in minutes — get a share‑ready certificate instantly
+          </h1>
+          <p class="hero-subtitle">
+            10 MCQs • 5–8 mins • Verifiable online • Great for freshers & professionals
+          </p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" id="startSkillCheck">Start 10‑Min Skill Check</button>
+          </div>
+          <ul class="badge-list">
+            <li class="badge">Recruiter‑ready certificate</li>
+            <li class="badge">Fast skill validation</li>
+            <li class="badge">Easy to share on LinkedIn</li>
+          </ul>
+          <div class="value-chips">
+            <div class="chip">10 MCQs</div>
+            <div class="chip">5–8 mins</div>
+            <div class="chip">Instant download</div>
+            <div class="chip">Verification link</div>
+          </div>
+          <div class="assess-search">
+            <input class="search-input" type="text" placeholder="Search a course to assess" aria-label="Search a course to assess" />
+            <button class="btn btn-outline search-button">Start Test — Get Certified</button>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <div class="hero-card">
+            <svg class="hero-cert" viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample Certificate">
+              <defs>
+                <linearGradient id="certBgHero" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#0b1220" />
+                  <stop offset="1" stop-color="#0a0e17" />
+                </linearGradient>
+                <linearGradient id="certAccentHero" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#06b6d4" />
+                  <stop offset="1" stop-color="#67e8f9" />
+                </linearGradient>
+              </defs>
+              <rect x="0" y="0" width="800" height="560" rx="28" fill="url(#certBgHero)" />
+              <rect x="26" y="26" width="748" height="508" rx="22" fill="none" stroke="url(#certAccentHero)" stroke-width="4" />
+              <rect x="44" y="44" width="712" height="472" rx="18" fill="none" stroke="rgba(148,163,184,0.25)" stroke-width="2" stroke-dasharray="10 10" />
+              <text x="400" y="140" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="44" font-weight="800" fill="#f1f5f9">Certificate of Completion</text>
+              <text x="400" y="200" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="20" font-weight="600" fill="#94a3b8">This is to certify that</text>
+              <text x="400" y="270" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="40" font-weight="800" fill="#ffffff">Your Name Here</text>
+              <text x="400" y="330" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="20" font-weight="600" fill="#94a3b8">has successfully completed</text>
+              <text x="400" y="390" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="28" font-weight="800" fill="#06b6d4">Quick Skill Check</text>
+              <text x="400" y="480" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="22" font-weight="700" fill="#94a3b8">Corso E-Learning</text>
+              <rect x="330" y="498" width="140" height="8" rx="4" fill="url(#certAccentHero)" opacity="0.75" />
+            </svg>
+          </div>
         </div>
       </div>
       <div class="hero-gradient"></div>
     </section>
 
-    <section class="certificate" id="certificate">
-      <div class="container certificate-inner">
-        <h2 class="section-title">This Certificate Could Be Yours!</h2>
-        <div class="certificate-card">
-          <div class="certificate-visual">
-            <svg class="certificate-image" viewBox="0 0 800 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample Certificate">
-              <defs>
-                <linearGradient id="certBg" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#0b1220" />
-                  <stop offset="1" stop-color="#0a0e17" />
-                </linearGradient>
-                <linearGradient id="certAccent" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#06b6d4" />
-                  <stop offset="1" stop-color="#67e8f9" />
-                </linearGradient>
-              </defs>
-              <rect x="0" y="0" width="800" height="560" rx="28" fill="url(#certBg)" />
-              <rect x="26" y="26" width="748" height="508" rx="22" fill="none" stroke="url(#certAccent)" stroke-width="4" />
-              <rect x="44" y="44" width="712" height="472" rx="18" fill="none" stroke="rgba(148,163,184,0.25)" stroke-width="2" stroke-dasharray="10 10" />
-
-              <text x="400" y="140" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="44" font-weight="800" fill="#f1f5f9">Certificate of Completion</text>
-              <text x="400" y="200" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="20" font-weight="600" fill="#94a3b8">This is to certify that</text>
-              <text x="400" y="270" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="40" font-weight="800" fill="#ffffff">Your Name Here</text>
-              <text x="400" y="330" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="20" font-weight="600" fill="#94a3b8">has successfully completed</text>
-              <text x="400" y="390" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="28" font-weight="800" fill="#06b6d4">Skill Certified</text>
-
-              <text x="400" y="480" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="22" font-weight="700" fill="#94a3b8">Corso E-Learning</text>
-              <rect x="330" y="498" width="140" height="8" rx="4" fill="url(#certAccent)" opacity="0.75" />
-            </svg>
-          </div>
-          <div class="certificate-actions">
-            <p class="certificate-prompt">Sign up or log in to get started</p>
-            <button class="btn btn-google">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-              Continue with Google
-            </button>
-            <span class="divider">or</span>
-            <button class="btn btn-email">Login with Email</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    
     <section class="features" id="features">
       <div class="container">
         <h2 class="section-title">Corso E-Learning is a Freemium Learning Platform That Provides</h2>
@@ -214,5 +215,6 @@
       <p>© 2026 ICTRD </p>
     </div>
   </footer>
+  <script src="main.js"></script>
 </body>
 </html>
