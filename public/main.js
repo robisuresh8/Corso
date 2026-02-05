@@ -45,7 +45,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    var revealTargets = ['.section-title', '.feature-card', '.course-card', '.blog-cat-card', '.pricing-feature', '.content-block', '.about-stat', '.about-card', '.about-intro-card', '.footer', '.chip', '.badge-list', '.assess-search', '.hero-card'];
+    var revealTargets = ['.section-title', '.feature-card', '.course-card', '.blog-cat-card', '.pricing-feature', '.content-block', '.about-stat', '.about-card', '.about-intro-card', '.footer', '.chip', '.badge-list', '.assess-search', '.hero-card', '.logo-row', '.stat-chip', '.subheader', '.test-topics', '.preview-pairs', '.preview-pair', '.cta-inner', '.featured-track', '.companies-track', '.promo-card', '.site-footer'];
     var elements = [];
     revealTargets.forEach(function (sel) {
       document.querySelectorAll(sel).forEach(function (el) {
@@ -70,10 +70,23 @@
       elements.forEach(function (el) { el.classList.add('reveal', 'is-visible'); });
     }
 
-    var startBtn = document.getElementById('startSkillCheck');
-    if (startBtn) {
-      startBtn.addEventListener('click', function () {
-        openQuizModal();
+    function bindSkillCheckButtons() {
+      document.querySelectorAll('#startSkillCheck').forEach(function (btn) {
+        btn.addEventListener('click', function () { openQuizModal(); });
+      });
+    }
+    bindSkillCheckButtons();
+
+    var subButtons = document.querySelectorAll('.subpage-buttons .btn');
+    if (subButtons.length) {
+      subButtons.forEach(function (el) {
+        el.addEventListener('pointermove', function (ev) {
+          var rect = el.getBoundingClientRect();
+          var x = ((ev.clientX - rect.left) / rect.width) * 100;
+          var y = ((ev.clientY - rect.top) / rect.height) * 100;
+          el.style.setProperty('--mx', x.toFixed(2) + '%');
+          el.style.setProperty('--my', y.toFixed(2) + '%');
+        });
       });
     }
     var searchCta = document.querySelector('.search-button');
@@ -81,6 +94,16 @@
       searchCta.addEventListener('click', function () {
         openQuizModal();
       });
+    }
+
+    var companies = document.querySelector('.companies-marquee');
+    var companiesTrack = companies && companies.querySelector('.companies-track');
+    if (companiesTrack) {
+      var original = '';
+      companiesTrack.querySelectorAll('.company-chip').forEach(function (chip) {
+        original += chip.outerHTML;
+      });
+      companiesTrack.innerHTML = original + original;
     }
 
     function openQuizModal() {
