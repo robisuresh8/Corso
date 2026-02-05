@@ -100,10 +100,29 @@
 
     function bindSkillCheckButtons() {
       document.querySelectorAll('#startSkillCheck').forEach(function (btn) {
-        btn.addEventListener('click', function () { openQuizModal(); });
+        btn.addEventListener('click', function () {
+          var target = document.getElementById('assessments');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
       });
     }
     bindSkillCheckButtons();
+    (function initCourseSkillButtons() {
+      document.querySelectorAll('.assessments .course-card').forEach(function (card) {
+        var body = card.querySelector('.course-card-body') || card;
+        var titleEl = card.querySelector('h3');
+        var name = titleEl ? (titleEl.textContent || '').trim() : '';
+        if (!name) return;
+        var btn = document.createElement('button');
+        btn.className = 'btn btn-outline course-test-btn';
+        btn.textContent = 'Start Skill Test';
+        btn.dataset.course = name;
+        body.appendChild(btn);
+        btn.addEventListener('click', function () {
+          openQuizModal(name);
+        });
+      });
+    })();
 
     var subButtons = document.querySelectorAll('.subpage-buttons .btn');
     if (subButtons.length) {
@@ -120,7 +139,12 @@
     var searchCta = document.querySelector('.search-button');
     if (searchCta) {
       searchCta.addEventListener('click', function () {
-        openQuizModal();
+        var val = '';
+        var input = document.querySelector('.search-input');
+        if (input) val = (input.value || '').trim();
+        var keys = ['Data Science Fundamentals','Java Basics','Digital Marketing','Excel for Analysis','Python Basics','SQL Essentials'];
+        var match = keys.find(function (k) { return k.toLowerCase() === val.toLowerCase(); });
+        openQuizModal(match);
       });
     }
     var searchInput = document.querySelector('.search-input');
@@ -184,7 +208,7 @@
       brandsTrack.dataset.loopDup = 'true';
     }
 
-    function openQuizModal() {
+    function openQuizModal(course) {
       var modal = document.createElement('div');
       modal.className = 'quiz-modal';
 
@@ -195,7 +219,7 @@
       header.className = 'quiz-header';
       var title = document.createElement('div');
       title.className = 'quiz-title';
-      title.textContent = 'Quick Skill Check — 10 MCQs';
+      title.textContent = (course && course.length) ? (course + ' — 10 MCQs') : 'Quick Skill Check — 10 MCQs';
       var timerEl = document.createElement('div');
       timerEl.className = 'quiz-timer';
       header.appendChild(title);
@@ -218,6 +242,7 @@
       var submitBtn = document.createElement('button');
       submitBtn.className = 'btn btn-primary';
       submitBtn.textContent = 'Submit';
+      submitBtn.style.display = 'none';
       footer.appendChild(closeBtn);
       footer.appendChild(submitBtn);
 
@@ -228,7 +253,81 @@
       modal.appendChild(card);
       document.body.appendChild(modal);
 
-      var questions = [
+      var bank = {
+        'Data Science Fundamentals': [
+          { q: 'Which reduces overfitting?', opts: ['Using deeper models', 'Regularization', 'Increasing features blindly', 'Lower train/test split'], a: 1 },
+          { q: 'Train/test split purpose?', opts: ['Faster training', 'Model evaluation', 'Data cleaning', 'Feature scaling'], a: 1 },
+          { q: 'Normalization vs standardization?', opts: ['Same operation', 'Min-max vs z-score', 'Both z-score', 'Both min-max'], a: 1 },
+          { q: 'Confusion matrix metric for imbalance?', opts: ['Accuracy', 'Precision', 'Recall', 'ROC AUC'], a: 3 },
+          { q: 'K-fold cross-validation helps?', opts: ['Data leakage', 'Robust evaluation', 'Feature selection', 'GPU training'], a: 1 },
+          { q: 'Pandas DataFrame is?', opts: ['Row-major array', '2D labeled data structure', 'Image tensor', 'Sparse matrix only'], a: 1 },
+          { q: 'Feature scaling needed for?', opts: ['Tree models', 'Distance-based models', 'Naive Bayes', 'Rule-based models'], a: 1 },
+          { q: 'Supervised learning example?', opts: ['K-means', 'Linear regression', 'PCA', 'DBSCAN'], a: 1 },
+          { q: 'ROC curve plots?', opts: ['Precision vs Recall', 'TPR vs FPR', 'TP vs TN', 'Loss vs Epoch'], a: 1 },
+          { q: 'Median is robust to?', opts: ['Outliers', 'Duplicates', 'Missing labels', 'Scaling'], a: 0 }
+        ],
+        'Java Basics': [
+          { q: 'Entry point signature?', opts: ['public static void main(String[] args)', 'void main()', 'public void main()', 'static int main()'], a: 0 },
+          { q: 'String comparison by content?', opts: ['==', 'equals()', 'compareTo()', 'hashCode()'], a: 1 },
+          { q: 'Primitive type?', opts: ['String', 'Integer', 'int', 'BigDecimal'], a: 2 },
+          { q: 'Access modifier most restrictive?', opts: ['public', 'protected', 'default', 'private'], a: 3 },
+          { q: 'OOP pillars include?', opts: ['Encapsulation', 'Pointers', 'Macros', 'Preprocessing'], a: 0 },
+          { q: 'ArrayList grows by?', opts: ['Fixed size', 'Dynamic resizing', 'Linked nodes', 'Stack frames'], a: 1 },
+          { q: 'Interface can define?', opts: ['Concrete methods only', 'Constants and abstract methods', 'Constructors', 'Instance fields'], a: 1 },
+          { q: 'finally block executes?', opts: ['Only on exception', 'Always if reached', 'Never', 'Only with return'], a: 1 },
+          { q: 'JDK includes?', opts: ['Only JVM', 'JRE + tools', 'Only JRE', 'Only compiler'], a: 1 },
+          { q: 'Package import keyword?', opts: ['include', 'using', 'import', 'require'], a: 2 }
+        ],
+        'Digital Marketing': [
+          { q: 'On-page SEO critical?', opts: ['Title tag', 'Server RAM', 'CDN region', 'IP address'], a: 0 },
+          { q: 'CTR stands for?', opts: ['Customer Time Rate', 'Click-Through Rate', 'Conversion Target Ratio', 'Content Timing Rank'], a: 1 },
+          { q: 'UTM parameters used for?', opts: ['Tracking campaigns', 'Securing cookies', 'Improving SEO directly', 'Compressing images'], a: 0 },
+          { q: 'Organic traffic is from?', opts: ['Paid ads', 'Search engines', 'Email only', 'Referral only'], a: 1 },
+          { q: 'Keyword research tool?', opts: ['Photoshop', 'Google Keyword Planner', 'Excel', 'Figma'], a: 1 },
+          { q: 'Conversion rate formula?', opts: ['Clicks/Sessions', 'Conversions/Visitors', 'Visitors/Conversions', 'Revenue/Impressions'], a: 1 },
+          { q: 'Bounce rate is?', opts: ['Pages per session', 'Single-page sessions', 'Time on site', 'New visitors only'], a: 1 },
+          { q: 'Meta description length ~?', opts: ['20–40 chars', '50–160 chars', '200–300 chars', 'Any length'], a: 1 },
+          { q: 'Content marketing pillar?', opts: ['Cold calls', 'Blog posts', 'Server tuning', 'SSL config'], a: 1 },
+          { q: 'Analytics tracks?', opts: ['Network latency', 'User behavior', 'Firmware updates', 'CPU cache'], a: 1 }
+        ],
+        'Excel for Analysis': [
+          { q: 'Absolute reference example?', opts: ['A1', '$A$1', 'R1C1', 'A$1'], a: 1 },
+          { q: 'PivotTable purpose?', opts: ['Styling cells', 'Summarize data', 'Chart only', 'Spell check'], a: 1 },
+          { q: 'Lookup across columns?', opts: ['COUNTIF', 'VLOOKUP/XLOOKUP', 'SUM', 'LEFT'], a: 1 },
+          { q: 'SUMIFS does?', opts: ['Sum with multiple criteria', 'Average values', 'Count cells', 'Join text'], a: 0 },
+          { q: 'Remove duplicates located under?', opts: ['Data tab', 'Formulas tab', 'Review tab', 'View tab'], a: 0 },
+          { q: 'Conditional Formatting helps?', opts: ['Sort rows', 'Highlight rules', 'Rename sheets', 'Protect cells'], a: 1 },
+          { q: 'TEXT function does?', opts: ['Calculates sum', 'Formats numbers/dates as text', 'Creates charts', 'Imports CSV'], a: 1 },
+          { q: 'Slicer used with?', opts: ['PivotTables', 'Macros', 'PowerPoint', 'Outlook'], a: 0 },
+          { q: 'Concatenate text?', opts: ['CONCAT/&,', 'SUM', 'COUNT', 'ROUND'], a: 0 },
+          { q: 'IF with AND example?', opts: ['IF(AND(A1>0,B1>0),1,0)', 'IFOR(A1,B1)', 'IFF(A1,B1)', 'IFX(A1,B1)'], a: 0 }
+        ],
+        'Python Basics': [
+          { q: 'Immutable sequence?', opts: ['list', 'tuple', 'dict', 'set'], a: 1 },
+          { q: 'Dict value by key?', opts: ['d.value(k)', 'd[k]', 'd.getKey(k)', 'd.item(k)'], a: 1 },
+          { q: 'List comprehension creates?', opts: ['tuple', 'dict', 'list', 'set'], a: 2 },
+          { q: 'PEP 8 relates to?', opts: ['Packaging', 'Style guide', 'Networking', 'Security'], a: 1 },
+          { q: 'Virtual environment tool?', opts: ['pip', 'venv', 'make', 'npm'], a: 1 },
+          { q: 'Slice last item?', opts: ['s[0]', 's[-1]', 's[1:]', 's[:-1]'], a: 1 },
+          { q: 'Function definition?', opts: ['func my():', 'def my():', 'fn my():', 'function my():'], a: 1 },
+          { q: 'Import math module?', opts: ['include math', 'require("math")', 'import math', 'use math'], a: 2 },
+          { q: 'Handle exception?', opts: ['try/except', 'catch/throw', 'on error resume', 'panic'], a: 0 },
+          { q: 'Variable args?', opts: ['args[]', '*args/**kwargs', 'argv', 'rest'], a: 1 }
+        ],
+        'SQL Essentials': [
+          { q: 'PRIMARY KEY ensures?', opts: ['Nullability', 'Uniqueness', 'Text only', 'Foreign rows'], a: 1 },
+          { q: 'INNER JOIN returns?', opts: ['All rows', 'Matching rows in both tables', 'Left table only', 'Right table only'], a: 1 },
+          { q: 'GROUP BY used with?', opts: ['Window functions', 'Aggregates', 'DDL only', 'Constraints'], a: 1 },
+          { q: 'WHERE vs HAVING?', opts: ['Both after GROUP BY', 'WHERE before, HAVING after', 'HAVING before WHERE', 'Same stage'], a: 1 },
+          { q: 'Index helps?', opts: ['Speed reads', 'Speed writes only', 'Disable constraints', 'Increase size only'], a: 0 },
+          { q: 'DELETE vs TRUNCATE?', opts: ['Same effect', 'TRUNCATE faster, no WHERE', 'DELETE alters schema', 'TRUNCATE logs row-by-row'], a: 1 },
+          { q: 'FOREIGN KEY enforces?', opts: ['Referential integrity', 'Unique text', 'Not null', 'Auto increment'], a: 0 },
+          { q: 'Check NULL?', opts: ['= NULL', 'IS NULL', '== NULL', 'EQUALS NULL'], a: 1 },
+          { q: 'LIKE wildcard for any length?', opts: ['_', '%', '*', '#'], a: 1 },
+          { q: 'Normalization aims to?', opts: ['Redundancy reduction', 'Query speed only', 'UI design', 'ETL scheduling'], a: 0 }
+        ]
+      };
+      var fallback = [
         { q: 'Which HTTP method is idempotent?', opts: ['POST', 'PUT', 'PATCH', 'CONNECT'], a: 1 },
         { q: 'SQL: Which clause filters rows?', opts: ['SELECT', 'WHERE', 'ORDER BY', 'GROUP BY'], a: 1 },
         { q: 'JS: const x = []; typeof x ?', opts: ['array', 'object', 'list', 'map'], a: 1 },
@@ -240,6 +339,7 @@
         { q: 'Data: CSV best for?', opts: ['Binary blobs', 'Tabular text data', 'Images', 'Compiled code'], a: 1 },
         { q: 'Testing: Unit tests focus on?', opts: ['Whole system', 'Single component', 'UI only', 'Network only'], a: 1 }
       ];
+      var questions = bank[course] || fallback;
 
       var idx = 0;
       var score = 0;
@@ -286,18 +386,30 @@
         });
         var actions = document.createElement('div');
         actions.className = 'quiz-actions';
-        var nextBtn = document.createElement('button');
-        nextBtn.className = 'btn btn-outline';
-        nextBtn.textContent = idx < questions.length - 1 ? 'Next' : 'Finish';
-        nextBtn.addEventListener('click', function () {
-          if (selected === -1) return;
-          if (selected === questions[idx].a) score += 1;
-          idx += 1;
-          updateProgress();
-          if (idx < questions.length) renderQuestion();
-          else finish();
-        });
-        actions.appendChild(nextBtn);
+        if (idx < questions.length - 1) {
+          var nextBtn = document.createElement('button');
+          nextBtn.className = 'btn btn-outline';
+          nextBtn.textContent = 'Next';
+          nextBtn.addEventListener('click', function () {
+            if (selected === -1) return;
+            if (selected === questions[idx].a) score += 1;
+            idx += 1;
+            updateProgress();
+            renderQuestion();
+          });
+          actions.appendChild(nextBtn);
+        } else {
+          var submitLast = document.createElement('button');
+          submitLast.className = 'btn btn-primary';
+          submitLast.textContent = 'Submit';
+          submitLast.addEventListener('click', function () {
+            if (selected === -1) return;
+            if (selected === questions[idx].a) score += 1;
+            updateProgress();
+            finish();
+          });
+          actions.appendChild(submitLast);
+        }
         body.appendChild(qEl);
         body.appendChild(list);
         body.appendChild(actions);
@@ -368,7 +480,7 @@
               var idArr = new Uint8Array(8);
               if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(idArr);
               var id = Array.prototype.map.call(idArr, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
-              var cert = { id: id, name: name, score: score, total: questions.length, ts: Date.now() };
+              var cert = { id: id, name: name, score: score, total: questions.length, ts: Date.now(), course: (course || 'General') };
               var list = [];
               try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
               list.push(cert);
@@ -376,7 +488,7 @@
               var canvas = document.createElement('canvas');
               canvas.width = 800;
               canvas.height = 560;
-              drawCertificate(canvas, name, score, questions.length);
+              drawCertificate(canvas, name, score, questions.length, course);
               var url = canvas.toDataURL('image/png');
               var a = document.createElement('a');
               a.href = url;
@@ -410,7 +522,7 @@
         }
       }
 
-      function drawCertificate(c, name, score, total) {
+      function drawCertificate(c, name, score, total, course) {
         var ctx = c.getContext('2d');
         var gr = ctx.createLinearGradient(0, 0, c.width, c.height);
         gr.addColorStop(0, '#0b1220');
@@ -439,7 +551,8 @@
         centerText(ctx, 'has successfully completed', c.width / 2, 330);
         ctx.font = '800 28px Outfit, system-ui, sans-serif';
         ctx.fillStyle = '#06b6d4';
-        centerText(ctx, 'Quick Skill Check (' + Math.round((score / total) * 100) + '%)', c.width / 2, 390);
+        var pctTxt = Math.round((score / total) * 100) + '%';
+        centerText(ctx, ((course && course.length) ? (course + ' Skill Check') : 'Quick Skill Check') + ' (' + pctTxt + ')', c.width / 2, 390);
         ctx.font = '700 22px Outfit, system-ui, sans-serif';
         ctx.fillStyle = '#94a3b8';
         centerText(ctx, 'Corso E-Learning', c.width / 2, 480);
