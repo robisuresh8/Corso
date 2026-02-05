@@ -7,11 +7,39 @@
     var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var rafId = 0;
 
+    // Mobile menu handled via hamburger toggle; no select dropdown
+
+    var isHome = !!document.querySelector('.hero');
+    if (!isHome && nav && !nav.querySelector('.nav-home')) {
+      var homeLink = document.createElement('a');
+      homeLink.href = 'index.html';
+      homeLink.className = 'nav-home';
+      homeLink.textContent = 'Home';
+      nav.insertBefore(homeLink, nav.firstChild);
+    }
+
+    function toggleNav() {
+      if (!nav || !menuToggle) return;
+      nav.classList.toggle('is-open');
+      menuToggle.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+    }
     if (menuToggle && nav) {
-      menuToggle.addEventListener('click', function () {
-        nav.classList.toggle('is-open');
-        menuToggle.setAttribute('aria-expanded', nav.classList.contains('is-open'));
+      menuToggle.addEventListener('click', toggleNav);
+      menuToggle.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleNav();
+        }
       });
+      if (header) {
+        header.addEventListener('click', function (e) {
+          var btn = e.target.closest && e.target.closest('.menu-toggle');
+          if (btn) toggleNav();
+        });
+      }
+      menuToggle.setAttribute('tabindex', '0');
+      menuToggle.setAttribute('role', 'button');
+      menuToggle.setAttribute('aria-controls', 'nav-panel');
     }
     document.querySelectorAll('.nav a').forEach(function (link) {
       link.addEventListener('click', function () {
@@ -45,7 +73,7 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    var revealTargets = ['.section-title', '.feature-card', '.course-card', '.blog-cat-card', '.pricing-feature', '.content-block', '.about-stat', '.about-card', '.about-intro-card', '.footer', '.chip', '.badge-list', '.assess-search', '.hero-card', '.logo-row', '.stat-chip', '.subheader', '.test-topics', '.preview-pairs', '.preview-pair', '.cta-inner', '.featured-track', '.companies-track', '.promo-card', '.site-footer'];
+    var revealTargets = ['.section-title', '.feature-card', '.course-card', '.blog-cat-card', '.pricing-feature', '.content-block', '.about-stat', '.about-card', '.about-intro-card', '.footer', '.chip', '.badge-list', '.assess-search', '.hero-card', '.stat-chip', '.subheader', '.test-topics', '.preview-pairs', '.preview-pair', '.cta-inner', '.featured-track', '.companies-track', '.brands-track', '.promo-card', '.site-footer'];
     var elements = [];
     revealTargets.forEach(function (sel) {
       document.querySelectorAll(sel).forEach(function (el) {
@@ -95,15 +123,65 @@
         openQuizModal();
       });
     }
+    var searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+      var topics = ['Python Basics','SQL Essentials','Java Basics','Data Science','Digital Marketing','Web Development','Machine Learning','Cloud Fundamentals','Cybersecurity','React','Node.js','C++','Git & GitHub','Networking','Excel Analytics'];
+      var wrap = document.querySelector('.assess-search');
+      var suggest = document.createElement('div');
+      suggest.className = 'search-suggest';
+      suggest.style.display = 'none';
+      wrap.appendChild(suggest);
+      function positionSuggest() {
+        var rectWrap = wrap.getBoundingClientRect();
+        var rectIn = searchInput.getBoundingClientRect();
+        var left = rectIn.left - rectWrap.left;
+        var top = rectIn.bottom - rectWrap.top + 6;
+        suggest.style.left = left + 'px';
+        suggest.style.top = top + 'px';
+        suggest.style.minWidth = rectIn.width + 'px';
+      }
+      function renderSuggest(val) {
+        suggest.innerHTML = '';
+        var q = (val || '').toLowerCase();
+        var items = topics.filter(function (t) { return t.toLowerCase().indexOf(q) !== -1; }).slice(0, 6);
+        items.forEach(function (t) {
+          var it = document.createElement('div');
+          it.className = 'suggest-item';
+          it.textContent = t;
+          it.addEventListener('mousedown', function () {
+            searchInput.value = t;
+            suggest.style.display = 'none';
+          });
+          suggest.appendChild(it);
+        });
+        suggest.style.display = items.length ? 'block' : 'none';
+        if (items.length) positionSuggest();
+      }
+      searchInput.addEventListener('input', function () { renderSuggest(searchInput.value); });
+      searchInput.addEventListener('focus', function () { renderSuggest(searchInput.value); positionSuggest(); });
+      searchInput.addEventListener('blur', function () { setTimeout(function () { suggest.style.display = 'none'; }, 120); });
+      window.addEventListener('resize', function () { if (suggest.style.display === 'block') positionSuggest(); });
+    }
 
     var companies = document.querySelector('.companies-marquee');
     var companiesTrack = companies && companies.querySelector('.companies-track');
-    if (companiesTrack) {
+    if (companiesTrack && companiesTrack.dataset.loopDup !== 'true') {
       var original = '';
-      companiesTrack.querySelectorAll('.company-chip').forEach(function (chip) {
-        original += chip.outerHTML;
+      companiesTrack.querySelectorAll('.company-badge').forEach(function (el) {
+        original += el.outerHTML;
       });
       companiesTrack.innerHTML = original + original;
+      companiesTrack.dataset.loopDup = 'true';
+    }
+    var brands = document.querySelector('.brands-marquee');
+    var brandsTrack = brands && brands.querySelector('.brands-track');
+    if (brandsTrack && brandsTrack.dataset.loopDup !== 'true') {
+      var originalBrands = '';
+      brandsTrack.querySelectorAll('.brand-badge').forEach(function (el) {
+        originalBrands += el.outerHTML;
+      });
+      brandsTrack.innerHTML = originalBrands + originalBrands;
+      brandsTrack.dataset.loopDup = 'true';
     }
 
     function openQuizModal() {
@@ -239,49 +317,97 @@
         result.className = 'quiz-result';
         var scoreEl = document.createElement('div');
         scoreEl.className = 'quiz-score';
-        scoreEl.textContent = 'Score: ' + score + '/' + questions.length + ' (' + Math.round((score / questions.length) * 100) + '%)';
+        var pct = Math.round((score / questions.length) * 100);
+        scoreEl.textContent = 'Score: ' + score + '/' + questions.length + ' (' + pct + '%)';
         var note = document.createElement('div');
         note.className = 'quiz-note';
-        note.textContent = 'Enter your name to download your certificate instantly.';
-        var form = document.createElement('div');
-        form.className = 'cert-form';
-        var nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.placeholder = 'Your full name';
-        var dlBtn = document.createElement('button');
-        dlBtn.className = 'btn btn-primary';
-        dlBtn.textContent = 'Generate & Download Certificate';
-        var preview = document.createElement('div');
-        preview.className = 'cert-preview';
-        var canvas = document.createElement('canvas');
-        canvas.width = 800;
-        canvas.height = 560;
-        preview.appendChild(canvas);
-        var share = document.createElement('div');
-        share.className = 'cert-share';
-        form.appendChild(nameInput);
-        form.appendChild(dlBtn);
+        note.textContent = pct >= 60
+          ? 'Enter your name, then complete payment to unlock your certificate.'
+          : 'Minimum 60% required to proceed to payment. Please retake the test.';
         result.appendChild(scoreEl);
         result.appendChild(note);
-        result.appendChild(form);
-        result.appendChild(preview);
-        result.appendChild(share);
         body.appendChild(result);
 
-        dlBtn.addEventListener('click', function () {
-          var name = (nameInput.value || '').trim();
-          if (!name) return;
-          drawCertificate(canvas, name, score, questions.length);
-          var url = canvas.toDataURL('image/png');
-          var a = document.createElement('a');
-          a.href = url;
-          a.download = 'corso-certificate.png';
-          a.click();
-          var payload = { n: name, s: score, t: Date.now() };
-          var v = btoa(JSON.stringify(payload));
-          var link = (location.origin || '') + (location.pathname || '/index.html') + '#verify=' + v;
-          share.textContent = 'Verification link: ' + link;
-        });
+        if (pct >= 60) {
+          var form = document.createElement('div');
+          form.className = 'cert-form';
+          var nameInput = document.createElement('input');
+          nameInput.type = 'text';
+          nameInput.placeholder = 'Your full name';
+          var payBtn = document.createElement('button');
+          payBtn.className = 'btn btn-primary';
+          payBtn.textContent = 'Proceed to Payment';
+          var share = document.createElement('div');
+          share.className = 'cert-share';
+          form.appendChild(nameInput);
+          form.appendChild(payBtn);
+          result.appendChild(form);
+          result.appendChild(share);
+          var paymentOpen = false;
+          payBtn.addEventListener('click', function () {
+            if (paymentOpen) return;
+            var name = (nameInput.value || '').trim();
+            if (!name) return;
+            paymentOpen = true;
+            var pay = document.createElement('div');
+            pay.className = 'cert-form';
+            var card = document.createElement('input');
+            card.type = 'text';
+            card.placeholder = 'Card number';
+            var cvv = document.createElement('input');
+            cvv.type = 'text';
+            cvv.placeholder = 'CVV';
+            var payNow = document.createElement('button');
+            payNow.className = 'btn btn-primary';
+            payNow.textContent = 'Pay Now';
+            pay.appendChild(card);
+            pay.appendChild(cvv);
+            pay.appendChild(payNow);
+            result.appendChild(pay);
+            payNow.addEventListener('click', function () {
+              var idArr = new Uint8Array(8);
+              if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(idArr);
+              var id = Array.prototype.map.call(idArr, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+              var cert = { id: id, name: name, score: score, total: questions.length, ts: Date.now() };
+              var list = [];
+              try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+              list.push(cert);
+              localStorage.setItem('certificates', JSON.stringify(list));
+              var canvas = document.createElement('canvas');
+              canvas.width = 800;
+              canvas.height = 560;
+              drawCertificate(canvas, name, score, questions.length);
+              var url = canvas.toDataURL('image/png');
+              var a = document.createElement('a');
+              a.href = url;
+              a.download = 'corso-certificate-' + id + '.png';
+              a.click();
+              var link = (location.origin || '') + '/public/verify.html?id=' + encodeURIComponent(id);
+              share.textContent = 'Verification link: ' + link;
+              payNow.disabled = true;
+              payNow.textContent = 'Paid';
+            });
+          });
+        } else {
+          var retry = document.createElement('button');
+          retry.className = 'btn btn-outline';
+          retry.textContent = 'Retake Test';
+          result.appendChild(retry);
+          retry.addEventListener('click', function () {
+            idx = 0;
+            score = 0;
+            selected = -1;
+            seconds = 600;
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(tick, 1000);
+            timerEl.textContent = fmt(seconds);
+            submitBtn.disabled = false;
+            body.innerHTML = '';
+            progressBar.style.width = '0%';
+            updateProgress();
+            renderQuestion();
+          });
+        }
       }
 
       function drawCertificate(c, name, score, total) {
@@ -353,6 +479,53 @@
       modal.classList.add('is-open');
       updateProgress();
       renderQuestion();
+    }
+
+    var userNavMyCerts = document.querySelector('.nav-mycerts');
+    var loginLink = document.querySelector('a[href="login.html"]');
+    var profileBtn = document.querySelector('.nav-profile');
+    var profileMenu = document.querySelector('.nav-profile-menu');
+    var logoutBtn = document.querySelector('.nav-logout');
+    var navName = document.querySelector('.nav-name');
+    (function updateAuthNav() {
+      var user = null;
+      try { user = JSON.parse(localStorage.getItem('sessionUser') || 'null'); } catch (e) {}
+      var logged = !!(user && user.email);
+      if (userNavMyCerts) userNavMyCerts.style.display = logged ? 'inline-block' : 'none';
+      if (loginLink) loginLink.style.display = logged ? 'none' : 'inline-block';
+      if (profileBtn) profileBtn.display = logged ? 'inline-flex' : 'none';
+      if (navName) navName.textContent = logged ? (user.name || user.email.split('@')[0]) : 'Profile';
+      if (profileMenu) profileMenu.hidden = true;
+    })();
+    if (profileBtn && profileMenu) {
+      profileBtn.addEventListener('click', function () {
+        var expanded = profileBtn.getAttribute('aria-expanded') === 'true';
+        var navEl = document.querySelector('.nav');
+        if (!expanded) {
+          var navRect = navEl.getBoundingClientRect();
+          var btnRect = profileBtn.getBoundingClientRect();
+          var left = btnRect.left - navRect.left;
+          var top = (btnRect.bottom - navRect.top) + 8;
+          profileMenu.style.left = left + 'px';
+          profileMenu.style.top = top + 'px';
+        }
+        profileBtn.setAttribute('aria-expanded', (!expanded).toString());
+        profileMenu.hidden = expanded;
+      });
+      document.addEventListener('click', function (e) {
+        if (!profileMenu.hidden && !profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
+          profileMenu.hidden = true;
+          profileBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', function () {
+        localStorage.removeItem('sessionUser');
+        if (profileMenu) profileMenu.hidden = true;
+        if (profileBtn) profileBtn.setAttribute('aria-expanded', 'false');
+        location.href = 'index.html';
+      });
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

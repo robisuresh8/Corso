@@ -16,17 +16,21 @@
       <nav class="nav">
         <a href="#features">Features</a>
         <a href="#learners">Learners</a>
-        <a href="about.html">About</a>
-        <a href="courses.html">Courses</a>
-        <a href="price.html">Pricing</a>
-        <a href="blog.html">Blog</a>
-        <a href="#certificate" class="btn btn-outline">Get Started</a>
+        
+        <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
+        <a href="verify.html">Verify Certificate</a>
+        <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
+        <div class="nav-profile-menu" hidden>
+          <button class="btn btn-outline nav-logout">Logout</button>
+        </div>
+        <a href="login.html">Login</a>
       </nav>
       <button class="menu-toggle" aria-label="Toggle menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </header>
+  
 
   <main>
     <section class="hero hero-split">
@@ -188,48 +192,143 @@
     <section class="learners" id="learners">
       <div class="container">
         <h2 class="section-title">Trusted by learners and recruiters</h2>
-        <div class="trust-bar">
-          <div class="logo-row">
-            <svg class="logo" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand A">
-              <rect x="0.5" y="0.5" width="179" height="49" rx="10" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
-              <text x="90" y="32" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="18" font-weight="700" fill="#94a3b8">Brand A</text>
-            </svg>
-            <svg class="logo" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand B">
-              <rect x="0.5" y="0.5" width="179" height="49" rx="10" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
-              <text x="90" y="32" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="18" font-weight="700" fill="#94a3b8">Brand B</text>
-            </svg>
-            <svg class="logo" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand C">
-              <rect x="0.5" y="0.5" width="179" height="49" rx="10" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
-              <text x="90" y="32" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="18" font-weight="700" fill="#94a3b8">Brand C</text>
-            </svg>
-            <svg class="logo" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand D">
-              <rect x="0.5" y="0.5" width="179" height="49" rx="10" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
-              <text x="90" y="32" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="18" font-weight="700" fill="#94a3b8">Brand D</text>
-            </svg>
-            <svg class="logo" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand E">
-              <rect x="0.5" y="0.5" width="179" height="49" rx="10" fill="#0a0e17" stroke="rgba(148,163,184,0.18)" />
-              <text x="90" y="32" text-anchor="middle" font-family="Outfit, system-ui, sans-serif" font-size="18" font-weight="700" fill="#94a3b8">Brand E</text>
-            </svg>
+      <div class="trust-bar">
+          <div class="brands-marquee">
+            <div class="brands-track">
+              <figure class="brand-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="16" fill="none" stroke="#2A73CC" stroke-width="8" stroke-linecap="round" stroke-dasharray="68 32" stroke-dashoffset="10"/>
+                  <path d="M46 32h-8" stroke="#2A73CC" stroke-width="8" stroke-linecap="round"/>
+                </svg>
+                <figcaption>Coursera</figcaption>
+              </figure>
+              <figure class="brand-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M20 24v13c0 9 6 13 12 13s12-4 12-13V24" fill="none" stroke="#A435F0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <figcaption>Udemy</figcaption>
+              </figure>
+              <figure class="brand-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="10" y="24" width="16" height="16" rx="4" fill="#ED227B"></rect>
+                  <rect x="26" y="24" width="16" height="16" rx="4" fill="#2E77BB"></rect>
+                  <path d="M22 30h18" stroke="#6AA5D8" stroke-width="6" stroke-linecap="round"/>
+                </svg>
+                <figcaption>edX</figcaption>
+              </figure>
+              <figure class="brand-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="12" y="12" width="40" height="40" rx="8" fill="#0A66C2"></rect>
+                  <circle cx="24" cy="28" r="4" fill="#ffffff"></circle>
+                  <rect x="30" y="24" width="14" height="16" rx="3" fill="#ffffff"></rect>
+                </svg>
+                <figcaption>LinkedIn Learning</figcaption>
+              </figure>
+              <figure class="brand-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="24" cy="32" r="5.5" fill="#00FF95"></circle>
+                  <circle cx="40" cy="32" r="5.5" fill="#00FF95"></circle>
+                </svg>
+                <figcaption>Skillshare</figcaption>
+              </figure>
+              <figure class="brand-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M32 10l18 8v12c0 10-8 18-18 22-10-4-18-12-18-22V18l18-8z" fill="#136E4A"></path>
+                  <path d="M32 24l-6 10h12l-6 10" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <figcaption>Khan Academy</figcaption>
+              </figure>
+            </div>
           </div>
           <div class="stat-chips">
             <div class="stat-chip">4.8/5 rating</div>
             <div class="stat-chip">900+ hiring partners</div>
             <div class="stat-chip">Hallmark certificate</div>
+            <div class="stat-chip">Instant download</div>
+            <div class="stat-chip">Shareable verification link</div>
+            <div class="stat-chip">10‑minute skill check</div>
           </div>
           <div class="companies-marquee">
             <div class="companies-track">
-              <div class="company-chip">Company A</div>
-              <div class="company-chip">Company B</div>
-              <div class="company-chip">Company C</div>
-              <div class="company-chip">Company D</div>
-              <div class="company-chip">Company E</div>
-              <div class="company-chip">Company F</div>
-              <div class="company-chip">Company G</div>
-              <div class="company-chip">Company H</div>
-              <div class="company-chip">Company A</div>
-              <div class="company-chip">Company B</div>
-              <div class="company-chip">Company C</div>
-              <div class="company-chip">Company D</div>
+              <!-- Requested priority: Accenture, Google, Infosys, Meta -->
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M20 24l22 8-22 8" stroke="#7F3DD2" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M18 42h28" stroke="#7F3DD2" stroke-width="4" stroke-linecap="round"></path>
+                </svg>
+                <figcaption>Accenture</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <circle cx="32" cy="32" r="20" fill="none" stroke="#4285F4" stroke-width="6" stroke-dasharray="31.4 94.2" stroke-dashoffset="0"></circle>
+                  <circle cx="32" cy="32" r="20" fill="none" stroke="#EA4335" stroke-width="6" stroke-dasharray="31.4 94.2" stroke-dashoffset="31.4"></circle>
+                  <circle cx="32" cy="32" r="20" fill="none" stroke="#FBBC05" stroke-width="6" stroke-dasharray="31.4 94.2" stroke-dashoffset="62.8"></circle>
+                  <circle cx="32" cy="32" r="20" fill="none" stroke="#34A853" stroke-width="6" stroke-dasharray="31.4 94.2" stroke-dashoffset="94.2"></circle>
+                  <path d="M32 32h12" stroke="#4285F4" stroke-width="6" fill="none" stroke-linecap="round"></path>
+                </svg>
+                <figcaption>Google</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="18" y="24" width="6" height="18" rx="3" fill="#1F6FEB"></rect>
+                  <circle cx="21" cy="20" r="3.5" fill="#1F6FEB"></circle>
+                  <path d="M30 28c8-4 16 0 16 6s-8 10-16 6" fill="none" stroke="#1F6FEB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <figcaption>Infosys</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M16 32c0-8 8-12 14-6 6-6 18-2 18 6s-12 12-18 6c-6 6-14 2-14-6z" stroke="#0064E4" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <figcaption>Meta</figcaption>
+              </figure>
+              <!-- Remaining companies -->
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M18 40c8 6 24 6 32 0" stroke="#FF9900" stroke-width="4" fill="none" stroke-linecap="round"></path>
+                  <path d="M46 38l7 3-6 6" stroke="#FF9900" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <figcaption>Amazon</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="12" y="12" width="16" height="16" fill="#F25022"></rect>
+                  <rect x="36" y="12" width="16" height="16" fill="#7FBA00"></rect>
+                  <rect x="12" y="36" width="16" height="16" fill="#00A4EF"></rect>
+                  <rect x="36" y="36" width="16" height="16" fill="#FFB900"></rect>
+                </svg>
+                <figcaption>Microsoft</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="10" y="22" width="44" height="20" fill="none" stroke="#0033A0" stroke-width="3"></rect>
+                  <rect x="10" y="26" width="44" height="2.5" fill="#0033A0"></rect>
+                  <rect x="10" y="31" width="44" height="2.5" fill="#0033A0"></rect>
+                  <rect x="10" y="36" width="44" height="2.5" fill="#0033A0"></rect>
+                </svg>
+                <figcaption>IBM</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="12" y="22" width="40" height="20" rx="10" fill="#E22726"></rect>
+                </svg>
+                <figcaption>Oracle</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <path d="M12 22h36l8 20H12z" fill="#0FA1E0"></path>
+                  <path d="M48 22l8 20" stroke="#F9D438" stroke-width="6" stroke-linecap="round"></path>
+                </svg>
+                <figcaption>SAP</figcaption>
+              </figure>
+              <figure class="company-badge">
+                <svg class="badge-icon" viewBox="0 0 64 64" aria-hidden="true">
+                  <rect x="12" y="22" width="40" height="6" rx="3" fill="#FF8C69"></rect>
+                  <rect x="12" y="30" width="40" height="6" rx="3" fill="#FF6AD5"></rect>
+                  <rect x="12" y="38" width="40" height="6" rx="3" fill="#8C69FF"></rect>
+                </svg>
+                <figcaption>TCS</figcaption>
+              </figure>
             </div>
           </div>
         </div>

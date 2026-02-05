@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Certificate — Corso E‑Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Corso E‑Learning</a>
+      <nav class="nav">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#learners">Learners</a>
+        
+        <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
+        <a href="verify.html">Verify Certificate</a>
+        <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
+        <div class="nav-profile-menu" hidden>
+          <button class="btn btn-outline nav-logout">Logout</button>
+        </div>
+        <a href="login.html">Login</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="page-title">Verify Certificate</h1>
+        <p class="page-subtitle">Verify using a unique certificate ID or by uploading the certificate image.</p>
+      </div>
+    </section>
+    <section class="content-block">
+      <div class="container">
+        <div class="hero-grid" style="margin-bottom:24px;">
+          <div class="hero-card">
+            <div class="card-head"><h3 class="hero-title">Verify by ID</h3></div>
+            <div class="card-body">
+              <div class="cta-row">
+                <input id="id-input" class="input" type="text" placeholder="Enter certificate ID" aria-label="Certificate ID" />
+                <button id="id-verify-btn" class="btn btn-primary">Verify</button>
+              </div>
+              <p class="about-reviews" id="id-help">Use the ID shared with your verification link.</p>
+            </div>
+          </div>
+          
+          <div class="hero-card">
+            <div class="card-head"><h3 class="hero-title">Verify by Image</h3></div>
+            <div class="card-body">
+              <div class="cta-row">
+                <input id="image-input" class="input" type="file" accept="image/*" aria-label="Upload certificate image" />
+              </div>
+              <div id="image-preview-wrap" class="hero-cert" style="display:none; position:relative; border:1px solid var(--border); border-radius: var(--radius);">
+                <img id="image-preview" alt="Uploaded certificate preview" style="max-width:100%; height:auto; display:block;" />
+              </div>
+              <div class="cta-row" style="margin-top:12px;">
+                <input id="image-id-input" class="input" type="text" placeholder="Enter visible ID from image" aria-label="Visible ID from image" />
+                <button id="image-verify-btn" class="btn btn-outline">Verify</button>
+              </div>
+              <p class="about-reviews" id="image-help">If the image shows an ID, enter it to verify.</p>
+            </div>
+          </div>
+        </div>
+        <p id="verify-info" class="about-reviews"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-gradient"></div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark">Corso E‑Learning</div>
+        <p class="brand-copy">Fast, focused skill checks with instant, verifiable certificates.</p>
+        <form class="newsletter" onsubmit="return false;">
+          <input type="email" class="newsletter-input" placeholder="Your email" aria-label="Your email" />
+          <button class="btn btn-primary newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="about.html">About</a>
+          <a href="blog.html">Blog</a>
+          <a href="price.html">Pricing</a>
+        </div>
+        <div class="footer-col">
+          <h4>Courses</h4>
+          <a href="courses.html">Browse</a>
+          <a href="index.html#assessments">Popular Assessments</a>
+          <a href="index.html#how">How It Works</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="about.html">Contact</a>
+          <a href="about.html">FAQs</a>
+          <a href="about.html">Guides</a>
+        </div>
+        <div class="footer-col">
+          <h4>Follow</h4>
+          <a href="#" aria-label="LinkedIn">LinkedIn</a>
+          <a href="#" aria-label="Twitter">Twitter</a>
+          <a href="#" aria-label="YouTube">YouTube</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 ICTRD • All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var info = document.getElementById('verify-info');
+      var idInput = document.getElementById('id-input');
+      var idBtn = document.getElementById('id-verify-btn');
+      var imgInput = document.getElementById('image-input');
+      var imgPreviewWrap = document.getElementById('image-preview-wrap');
+      var imgPreview = document.getElementById('image-preview');
+      var imgIdInput = document.getElementById('image-id-input');
+      var imgBtn = document.getElementById('image-verify-btn');
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+      function render(cert) {
+        var pct = Math.round((cert.score / cert.total) * 100);
+        var d = new Date(cert.ts);
+        var link = (location.origin || '') + '/public/verify.html?id=' + encodeURIComponent(cert.id);
+        info.innerHTML = 'ID ' + cert.id + ' • ' + cert.name + ' • Score ' + pct + '% • Issued ' + d.toLocaleString() + ' ';
+        var copy = document.createElement('button');
+        copy.className = 'btn btn-outline';
+        copy.textContent = 'Copy Verification Link';
+        copy.addEventListener('click', function () {
+          var ok = false;
+          try {
+            navigator.clipboard.writeText(link);
+            ok = true;
+          } catch (e) {
+            var ta = document.createElement('textarea');
+            ta.value = link;
+            document.body.appendChild(ta);
+            ta.select();
+            try { ok = document.execCommand('copy'); } catch (e2) {}
+            document.body.removeChild(ta);
+          }
+          copy.textContent = ok ? 'Copied' : 'Copy Failed';
+        });
+        info.appendChild(copy);
+      }
+      function verifyById(id) {
+        var cert = list.find(function (c) { return String(c.id).trim() === String(id).trim(); });
+        if (!cert) {
+          info.textContent = 'Invalid or unavailable certificate ID.';
+          return;
+        }
+        render(cert);
+      }
+      var qpId = params.get('id');
+      if (qpId) verifyById(qpId);
+      idBtn.addEventListener('click', function () {
+        var val = idInput.value;
+        verifyById(val);
+      });
+      idInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          verifyById(idInput.value);
+        }
+      });
+      imgInput.addEventListener('change', function () {
+        var f = imgInput.files && imgInput.files[0];
+        if (!f) return;
+        var url = URL.createObjectURL(f);
+        imgPreview.src = url;
+        imgPreviewWrap.style.display = 'block';
+      });
+      imgBtn.addEventListener('click', function () {
+        var val = imgIdInput.value;
+        verifyById(val);
+      });
+    })();
+  </script>
+</body>
+</html>

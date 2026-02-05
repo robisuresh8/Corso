@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Certificates — Corso E‑Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Corso E‑Learning</a>
+      <nav class="nav">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#learners">Learners</a>
+        
+        <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
+        <a href="verify.html">Verify Certificate</a>
+        <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
+        <div class="nav-profile-menu" hidden>
+          <button class="btn btn-outline nav-logout">Logout</button>
+        </div>
+        <a href="login.html">Login</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1 class="page-title">My Certificates</h1>
+        <p class="page-subtitle">View, download, and share your certificates with a verification link.</p>
+      </div>
+    </section>
+    <section class="content-block">
+      <div class="container">
+        <div id="cert-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-gradient"></div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark">Corso E‑Learning</div>
+        <p class="brand-copy">Fast, focused skill checks with instant, verifiable certificates.</p>
+        <form class="newsletter" onsubmit="return false;">
+          <input type="email" class="newsletter-input" placeholder="Your email" aria-label="Your email" />
+          <button class="btn btn-primary newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="about.html">About</a>
+          <a href="blog.html">Blog</a>
+          <a href="price.html">Pricing</a>
+        </div>
+        <div class="footer-col">
+          <h4>Courses</h4>
+          <a href="courses.html">Browse</a>
+          <a href="index.html#assessments">Popular Assessments</a>
+          <a href="index.html#how">How It Works</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="about.html">Contact</a>
+          <a href="about.html">FAQs</a>
+          <a href="about.html">Guides</a>
+        </div>
+        <div class="footer-col">
+          <h4>Follow</h4>
+          <a href="#" aria-label="LinkedIn">LinkedIn</a>
+          <a href="#" aria-label="Twitter">Twitter</a>
+          <a href="#" aria-label="YouTube">YouTube</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 ICTRD • All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    (function () {
+      var user = null;
+      try { user = JSON.parse(localStorage.getItem('sessionUser') || 'null'); } catch (e) {}
+      if (!(user && user.email)) { location.href = 'login.html'; return; }
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+      var host = (location.origin || '') + '/public/verify.html?id=';
+      var container = document.getElementById('cert-list');
+      if (!list.length) {
+        var empty = document.createElement('p');
+        empty.textContent = 'No certificates yet. Take a quick skill check to generate one.';
+        container.appendChild(empty);
+        return;
+      }
+      var grid = document.createElement('div');
+      grid.className = 'assessments-grid';
+      list.slice().reverse().forEach(function (c) {
+        var card = document.createElement('article');
+        card.className = 'feature-card';
+        var title = document.createElement('h3');
+        title.textContent = c.name + ' — ' + Math.round((c.score / c.total) * 100) + '%';
+        var info = document.createElement('p');
+        var d = new Date(c.ts);
+        info.textContent = 'ID ' + c.id + ' • ' + d.toLocaleString();
+        var actions = document.createElement('div');
+        actions.className = 'subpage-buttons';
+        var view = document.createElement('a');
+        view.className = 'btn btn-outline';
+        view.href = 'verify.html?id=' + encodeURIComponent(c.id);
+        view.textContent = 'View';
+        var share = document.createElement('button');
+        share.className = 'btn btn-outline';
+        share.textContent = 'Copy link';
+        share.addEventListener('click', function () {
+          var link = host + encodeURIComponent(c.id);
+          navigator.clipboard && navigator.clipboard.writeText(link);
+        });
+        actions.appendChild(view);
+        actions.appendChild(share);
+        card.appendChild(title);
+        card.appendChild(info);
+        card.appendChild(actions);
+        grid.appendChild(card);
+      });
+      container.appendChild(grid);
+    })();
+  </script>
+</body>
+</html>

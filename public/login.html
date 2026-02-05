@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Corso E‑Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Corso E‑Learning</a>
+      <nav class="nav">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#learners">Learners</a>
+        
+        <a href="login.html">Login</a>
+        <a href="verify.html">Verify Certificate</a>
+        <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
+        <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
+        <div class="nav-profile-menu" hidden>
+          <button class="btn btn-outline nav-logout">Logout</button>
+        </div>
+        
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="auth">
+      <div class="container">
+        <div class="auth-grid">
+          <div class="auth-copy">
+            <p class="hero-badge">Welcome back</p>
+            <h1 class="hero-title">Login to your account</h1>
+            <p class="hero-subtitle">Access your certificates, skill checks, and saved progress.</p>
+          </div>
+          <div class="auth-card">
+            <div class="auth-tabs">
+              <button class="tab-btn is-active" data-target="login">Login</button>
+              <button class="tab-btn" data-target="signup">Sign Up</button>
+            </div>
+            <div class="auth-pane auth-login is-active">
+              <form class="auth-form" onsubmit="return false;">
+                <div class="form-row">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" class="input" placeholder="you@example.com" aria-label="Email" required />
+                </div>
+                <div class="form-row">
+                  <label for="password">Password</label>
+                  <input id="password" type="password" class="input" placeholder="Enter your password" aria-label="Password" required />
+                </div>
+                <div class="form-actions">
+                  <label class="checkbox">
+                    <input type="checkbox" /> Remember me
+                  </label>
+                  <a class="link" href="#">Forgot password?</a>
+                </div>
+                <button class="btn btn-primary auth-submit">Login</button>
+                <p class="auth-note">No account? <a class="link" href="#" data-switch="signup">Create one</a></p>
+              </form>
+            </div>
+            <div class="auth-pane auth-signup">
+              <form class="auth-form" onsubmit="return false;">
+                <div class="form-row">
+                  <label for="name">Full name</label>
+                  <input id="name" type="text" class="input" placeholder="Your name" aria-label="Full name" required />
+                </div>
+                <div class="form-row">
+                  <label for="email2">Email</label>
+                  <input id="email2" type="email" class="input" placeholder="you@example.com" aria-label="Email" required />
+                </div>
+                <div class="form-row">
+                  <label for="password2">Password</label>
+                  <input id="password2" type="password" class="input" placeholder="Create a password" aria-label="Password" required />
+                </div>
+                <div class="form-row">
+                  <label for="confirm">Confirm password</label>
+                  <input id="confirm" type="password" class="input" placeholder="Re-enter password" aria-label="Confirm password" required />
+                </div>
+                <div class="form-actions">
+                  <label class="checkbox">
+                    <input type="checkbox" required /> I agree to the terms
+                  </label>
+                  <span></span>
+                </div>
+                <button class="btn btn-primary auth-submit">Sign Up</button>
+                <p class="auth-note">Already have an account? <a class="link" href="#" data-switch="login">Login</a></p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-gradient"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-gradient"></div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark">Corso E‑Learning</div>
+        <p class="brand-copy">Fast, focused skill checks with instant, verifiable certificates.</p>
+        <form class="newsletter" onsubmit="return false;">
+          <input type="email" class="newsletter-input" placeholder="Your email" aria-label="Your email" />
+          <button class="btn btn-primary newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="about.html">About</a>
+          <a href="blog.html">Blog</a>
+          <a href="price.html">Pricing</a>
+        </div>
+        <div class="footer-col">
+          <h4>Courses</h4>
+          <a href="courses.html">Browse</a>
+          <a href="index.html#assessments">Popular Assessments</a>
+          <a href="index.html#how">How It Works</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="about.html">Contact</a>
+          <a href="about.html">FAQs</a>
+          <a href="about.html">Guides</a>
+        </div>
+        <div class="footer-col">
+          <h4>Follow</h4>
+          <a href="#" aria-label="LinkedIn">LinkedIn</a>
+          <a href="#" aria-label="Twitter">Twitter</a>
+          <a href="#" aria-label="YouTube">YouTube</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 ICTRD • All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll('.auth-tabs .tab-btn');
+      var loginPane = document.querySelector('.auth-login');
+      var signupPane = document.querySelector('.auth-signup');
+      function activate(target) {
+        tabs.forEach(function (b) { b.classList.toggle('is-active', b.dataset.target === target); });
+        loginPane.classList.toggle('is-active', target === 'login');
+        signupPane.classList.toggle('is-active', target === 'signup');
+      }
+      tabs.forEach(function (btn) {
+        btn.addEventListener('click', function () { activate(btn.dataset.target); });
+      });
+      document.querySelectorAll('[data-switch]').forEach(function (lnk) {
+        lnk.addEventListener('click', function (e) {
+          e.preventDefault();
+          activate(lnk.dataset.switch);
+        });
+      });
+      var signup = document.querySelector('.auth-signup .auth-form');
+      if (signup) {
+        var pwd = document.getElementById('password2');
+        var confirm = document.getElementById('confirm');
+        var email2 = document.getElementById('email2');
+        var name = document.getElementById('name');
+        var meter = document.createElement('div');
+        meter.style.height = '8px';
+        meter.style.borderRadius = '8px';
+        meter.style.background = 'rgba(148,163,184,0.18)';
+        var bar = document.createElement('div');
+        bar.style.height = '100%';
+        bar.style.width = '0%';
+        bar.style.borderRadius = '8px';
+        bar.style.background = 'linear-gradient(90deg, #ef4444, #f59e0b, #10b981)';
+        meter.appendChild(bar);
+        pwd.parentNode.appendChild(meter);
+        function strength(v) {
+          var s = 0;
+          if (v.length >= 8) s++;
+          if (/[A-Z]/.test(v)) s++;
+          if (/[a-z]/.test(v)) s++;
+          if (/[0-9]/.test(v)) s++;
+          if (/[^A-Za-z0-9]/.test(v)) s++;
+          return Math.min(5, s);
+        }
+        pwd.addEventListener('input', function () {
+          var s = strength(pwd.value);
+          bar.style.width = (s * 20) + '%';
+        });
+        signup.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var errors = [];
+          var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email2.value);
+          if (!emailOk) errors.push('Invalid email');
+          if (pwd.value.length < 8) errors.push('Password too short');
+          if (pwd.value !== confirm.value) errors.push('Passwords do not match');
+          if (!name.value.trim()) errors.push('Name required');
+          if (errors.length) return;
+          var user = { email: email2.value, name: name.value.trim() };
+          localStorage.setItem('sessionUser', JSON.stringify(user));
+          location.href = 'my-certificates.html';
+        });
+      }
+      var login = document.querySelector('.auth-login .auth-form');
+      if (login) {
+        login.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var email = document.getElementById('email').value;
+          var user = { email: email };
+          localStorage.setItem('sessionUser', JSON.stringify(user));
+          location.href = 'my-certificates.html';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
