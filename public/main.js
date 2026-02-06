@@ -606,7 +606,7 @@
       var logged = !!(user && user.email);
       if (userNavMyCerts) userNavMyCerts.style.display = logged ? 'inline-block' : 'none';
       if (loginLink) loginLink.style.display = logged ? 'none' : 'inline-block';
-      if (profileBtn) profileBtn.display = logged ? 'inline-flex' : 'none';
+      if (profileBtn) profileBtn.style.display = logged ? 'inline-flex' : 'none';
       if (navName) navName.textContent = logged ? (user.name || user.email.split('@')[0]) : 'Profile';
       if (profileMenu) profileMenu.hidden = true;
     })();

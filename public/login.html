@@ -40,6 +40,11 @@
             <p class="hero-badge">Welcome back</p>
             <h1 class="hero-title">Login to your account</h1>
             <p class="hero-subtitle">Access your certificates, skill checks, and saved progress.</p>
+            <ul class="auth-benefits">
+              <li><span>✅</span><span>Instant access to your certificates</span></li>
+              <li><span>✅</span><span>Retake skill tests anytime</span></li>
+              <li><span>✅</span><span>Save your progress securely</span></li>
+            </ul>
           </div>
           <div class="auth-card">
             <div class="auth-tabs">
@@ -50,11 +55,17 @@
               <form class="auth-form" onsubmit="return false;">
                 <div class="form-row">
                   <label for="email">Email</label>
-                  <input id="email" type="email" class="input" placeholder="you@example.com" aria-label="Email" required />
+                  <div class="input-wrap">
+                    <span class="input-icon">✉️</span>
+                    <input id="email" type="email" class="input" placeholder="you@example.com" aria-label="Email" required />
+                  </div>
                 </div>
                 <div class="form-row">
                   <label for="password">Password</label>
-                  <input id="password" type="password" class="input" placeholder="Enter your password" aria-label="Password" required />
+                  <div class="input-wrap">
+                    <span class="input-icon">🔒</span>
+                    <input id="password" type="password" class="input" placeholder="Enter your password" aria-label="Password" required />
+                  </div>
                 </div>
                 <div class="form-actions">
                   <label class="checkbox">
@@ -63,6 +74,11 @@
                   <a class="link" href="#">Forgot password?</a>
                 </div>
                 <button class="btn btn-primary auth-submit">Login</button>
+                <div class="auth-divider"><span>or continue with</span></div>
+                <div class="social-row">
+                  <button class="btn btn-outline btn-social" type="button"><span>🔵</span><span>LinkedIn</span></button>
+                  <button class="btn btn-outline btn-social" type="button"><span>🟥</span><span>Google</span></button>
+                </div>
                 <p class="auth-note">No account? <a class="link" href="#" data-switch="signup">Create one</a></p>
               </form>
             </div>
@@ -91,6 +107,11 @@
                   <span></span>
                 </div>
                 <button class="btn btn-primary auth-submit">Sign Up</button>
+                <div class="auth-divider"><span>or continue with</span></div>
+                <div class="social-row">
+                  <button class="btn btn-outline btn-social" type="button"><span>🔵</span><span>LinkedIn</span></button>
+                  <button class="btn btn-outline btn-social" type="button"><span>🟥</span><span>Google</span></button>
+                </div>
                 <p class="auth-note">Already have an account? <a class="link" href="#" data-switch="login">Login</a></p>
               </form>
             </div>
