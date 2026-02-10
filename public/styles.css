@@ -213,8 +213,8 @@ body {
 .trust-bar { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
 .brands-marquee { position: relative; overflow: hidden; margin-bottom: 16px; -webkit-mask-image: none; mask-image: none; }
 .brands-track { display: inline-flex; align-items: center; gap: 18px; will-change: transform; animation: brandsLoop 26s linear infinite reverse; width: max-content; }
-.brand-badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg); margin: 0; }
-.brand-badge .badge-icon { width: 48px; height: 48px; display: block; }
+.brand-badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-elevated); margin: 0; }
+.brand-badge .badge-icon { width: 48px; height: 48px; display: block; object-fit: contain; }
 .brand-badge figcaption { color: var(--text-muted); font-weight: 700; }
 @keyframes brandsLoop { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .stat-chips { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -245,7 +245,7 @@ body {
 .companies-marquee { position: relative; overflow: hidden; margin-top: 16px; -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
 .companies-track { display: inline-flex; align-items: center; gap: 16px; will-change: transform; animation: companiesLoop 28s linear infinite; width: max-content; }
 .company-badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg); }
-.company-badge .badge-icon { width: 48px; height: 48px; display: block; }
+.company-badge .badge-icon { width: 48px; height: 48px; display: block; object-fit: contain; }
 .company-badge figcaption { color: var(--text-muted); font-weight: 700; }
 @keyframes companiesLoop { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) {
@@ -256,6 +256,7 @@ body {
 .course-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
 .course-card:hover { border-color: rgba(6, 182, 212, 0.35); transform: translateY(-2px); }
 .course-card-image { height: 140px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2.5rem; }
+.course-card-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .course-card-body { padding: 20px; }
 .course-card h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
 .course-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
