@@ -22,6 +22,7 @@
         <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
         <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
         <div class="nav-profile-menu" hidden>
+          <a class="btn btn-outline" href="dashboard.html">Dashboard</a>
           <button class="btn btn-outline nav-logout">Logout</button>
         </div>
         
@@ -227,7 +228,7 @@
           if (errors.length) return;
           var user = { email: email2.value, name: name.value.trim() };
           localStorage.setItem('sessionUser', JSON.stringify(user));
-          location.href = 'my-certificates.html';
+          location.href = 'dashboard.html';
         });
       }
       var login = document.querySelector('.auth-login .auth-form');
@@ -237,7 +238,7 @@
           var email = document.getElementById('email').value;
           var user = { email: email };
           localStorage.setItem('sessionUser', JSON.stringify(user));
-          location.href = 'my-certificates.html';
+          location.href = 'dashboard.html';
         });
       }
     })();

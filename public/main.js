@@ -611,25 +611,43 @@
       if (profileMenu) profileMenu.hidden = true;
     })();
     if (profileBtn && profileMenu) {
-      profileBtn.addEventListener('click', function () {
-        var expanded = profileBtn.getAttribute('aria-expanded') === 'true';
+      function openProfileMenu() {
         var navEl = document.querySelector('.nav');
-        if (!expanded) {
-          var navRect = navEl.getBoundingClientRect();
-          var btnRect = profileBtn.getBoundingClientRect();
-          var left = btnRect.left - navRect.left;
-          var top = (btnRect.bottom - navRect.top) + 8;
-          profileMenu.style.left = left + 'px';
-          profileMenu.style.top = top + 'px';
-        }
-        profileBtn.setAttribute('aria-expanded', (!expanded).toString());
-        profileMenu.hidden = expanded;
+        var navRect = navEl.getBoundingClientRect();
+        var btnRect = profileBtn.getBoundingClientRect();
+        var left = btnRect.left - navRect.left;
+        var top = (btnRect.bottom - navRect.top) + 8;
+        profileMenu.style.left = left + 'px';
+        profileMenu.style.top = top + 'px';
+        profileBtn.setAttribute('aria-expanded', 'true');
+        profileMenu.hidden = false;
+      }
+      function closeProfileMenu() {
+        profileMenu.hidden = true;
+        profileBtn.setAttribute('aria-expanded', 'false');
+      }
+      profileBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var expanded = profileBtn.getAttribute('aria-expanded') === 'true';
+        if (expanded) closeProfileMenu(); else openProfileMenu();
       });
       document.addEventListener('click', function (e) {
         if (!profileMenu.hidden && !profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
-          profileMenu.hidden = true;
-          profileBtn.setAttribute('aria-expanded', 'false');
+          closeProfileMenu();
         }
+      });
+      document.addEventListener('pointerdown', function (e) {
+        if (!profileMenu.hidden && !profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
+          closeProfileMenu();
+        }
+      }, true);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !profileMenu.hidden) closeProfileMenu();
+      });
+      window.addEventListener('blur', function () { if (!profileMenu.hidden) closeProfileMenu(); });
+      profileMenu.addEventListener('click', function (e) {
+        var t = e.target && e.target.closest && e.target.closest('a,button');
+        if (t) closeProfileMenu();
       });
     }
     if (logoutBtn) {
@@ -639,6 +657,66 @@
         if (profileBtn) profileBtn.setAttribute('aria-expanded', 'false');
         location.href = 'index.html';
       });
+    }
+    var dash = document.querySelector('.dashboard');
+    if (dash) {
+      var u = null;
+      try { u = JSON.parse(localStorage.getItem('sessionUser') || 'null'); } catch (e) {}
+      var nameEl = document.querySelector('.dash-user');
+      if (nameEl) {
+        var n = u && (u.name || (u.email || '').split('@')[0]) || 'User';
+        nameEl.textContent = n;
+      }
+      var chart = document.querySelector('.dash-chart');
+      if (chart && chart.getContext) {
+        var ctx = chart.getContext('2d');
+        ctx.clearRect(0, 0, chart.width, chart.height);
+        ctx.fillStyle = '#0b0f18';
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 1;
+        for (var i = 0; i <= 4; i++) {
+          var y = 20 + i * 40;
+          ctx.beginPath(); ctx.moveTo(20, y); ctx.lineTo(chart.width - 20, y); ctx.stroke();
+        }
+        var points = [28, 22, 26, 34, 30];
+        ctx.strokeStyle = '#06b6d4';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (var j = 0; j < points.length; j++) {
+          var x = 20 + j * ((chart.width - 40) / (points.length - 1));
+          var y2 = 20 + (40 * (4 - (points[j] - 20) / 2));
+          if (j === 0) ctx.moveTo(x, y2); else ctx.lineTo(x, y2);
+        }
+        ctx.stroke();
+      }
+      var monthEl = document.querySelector('.dash-month');
+      var calEl = document.querySelector('.dash-calendar');
+      if (monthEl && calEl) {
+        var now = new Date();
+        var formatter = new Intl.DateTimeFormat('en', { month: 'short', year: 'numeric' });
+        monthEl.textContent = formatter.format(now);
+        var first = new Date(now.getFullYear(), now.getMonth(), 1);
+        var startIdx = first.getDay();
+        var days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        var labels = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+        labels.forEach(function (l) {
+          var d = document.createElement('div'); d.className = 'day'; d.textContent = l; calEl.appendChild(d);
+        });
+        for (var k = 0; k < startIdx; k++) {
+          var pad = document.createElement('div'); pad.className = 'day'; pad.textContent = ''; calEl.appendChild(pad);
+        }
+        for (var dnum = 1; dnum <= days; dnum++) {
+          var dcell = document.createElement('div'); dcell.className = 'day'; dcell.textContent = dnum; calEl.appendChild(dcell);
+        }
+      }
+      var signout = document.querySelector('.dash-signout');
+      if (signout) {
+        signout.addEventListener('click', function () {
+          localStorage.removeItem('sessionUser');
+          location.href = 'index.html';
+        });
+      }
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

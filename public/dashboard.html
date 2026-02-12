@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Corso E‑Learning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Corso E‑Learning</a>
+      <nav class="nav">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#assessments">Assessments</a>
+        <a href="verify.html">Verify Certificate</a>
+        <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
+        <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
+        <div class="nav-profile-menu" hidden>
+          <a class="btn btn-outline" href="dashboard.html">Dashboard</a>
+          <button class="btn btn-outline nav-logout">Logout</button>
+        </div>
+        <a href="login.html">Login</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="dashboard">
+      <div class="container">
+        <div class="dashboard-grid">
+          <aside class="dash-sidebar">
+            <div class="dash-brand">Corso</div>
+            <nav class="dash-menu">
+              <a class="is-active">Home</a>
+              <a>Classes</a>
+              <a>Documents</a>
+              <a>Bookmarks</a>
+              <a>Messages</a>
+              <a>Settings</a>
+              <button class="dash-signout">Sign Out</button>
+            </nav>
+          </aside>
+          <section class="dash-main">
+            <div class="dash-search">
+              <input type="text" placeholder="Search courses, documents, activities…" />
+              <div class="dash-search-actions">
+                <button title="Light">☀️</button>
+                <button title="Dark">🌙</button>
+              </div>
+            </div>
+            <div class="dash-welcome">
+              <div class="dash-welcome-text">
+                <h2 class="dash-title">Welcome back, <span class="dash-user">User</span> 👋</h2>
+                <p>You've learned <strong class="dash-progress-goal">76%</strong> of your goal this week.</p>
+              </div>
+              <div class="dash-illustration"></div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-card">
+                <div class="dash-card-head">
+                  <div>Performance</div>
+                  <div>Overall</div>
+                </div>
+                <div class="dash-card-body">
+                  <canvas class="dash-chart" width="480" height="220"></canvas>
+                </div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-head">
+                  <div>Completion Progress</div>
+                </div>
+                <div class="dash-card-body">
+                  <ul class="dash-progress-list">
+                    <li><span>Web Development</span><span class="pct">78%</span></li>
+                    <li><span>App Development</span><span class="pct">39%</span></li>
+                    <li><span>MERN Stack</span><span class="pct">21%</span></li>
+                    <li><span>Front End Developer</span><span class="pct">90%</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="dash-row">
+              <div class="dash-card">
+                <div class="dash-card-head">
+                  <div>Messages</div>
+                  <a class="dash-link">View All</a>
+                </div>
+                <div class="dash-card-body">
+                  <ul class="dash-messages">
+                    <li><span class="badge badge-user">MA</span><div><strong>Mayur Aglave</strong><p>Just finished the first chapter.</p></div><span class="time">08:30 pm</span></li>
+                    <li><span class="badge badge-user">OT</span><div><strong>Om Tiwari</strong><p>Check the formulas in these images.</p></div><span class="time">12:02 pm</span></li>
+                    <li><span class="badge badge-user">JA</span><div><strong>Joshua Anglo</strong><p>Submit your assignment.</p></div><span class="time">10:11 am</span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-head">
+                  <div>Top Performing Student</div>
+                </div>
+                <div class="dash-card-body">
+                  <ul class="dash-top">
+                    <li><span class="badge badge-user">JA</span><strong>Joshua Anglo</strong><span class="score">9,870 points</span></li>
+                    <li><span class="badge badge-user">AA</span><strong>Arnav Asher</strong><span class="score">8,120 points</span></li>
+                    <li><span class="badge badge-user">OT</span><strong>Om Tiwari</strong><span class="score">6,970 points</span></li>
+                    <li><span class="badge badge-user">MA</span><strong>Mayur Aglave</strong><span class="score">5,750 points</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+          <aside class="dash-aside">
+            <div class="dash-card">
+              <div class="dash-card-head">
+                <div>My Progress</div>
+                <div class="dash-month"></div>
+              </div>
+              <div class="dash-card-body">
+                <div class="dash-calendar"></div>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-head">
+                <div>Upcoming Activities</div>
+                <a class="dash-link">See all</a>
+              </div>
+              <div class="dash-card-body">
+                <ul class="dash-activities">
+                  <li><span class="badge badge-day">8</span><div><strong>Web Development</strong><p>10th July 2026 • 8–9 AM</p></div></li>
+                  <li><span class="badge badge-day">13</span><div><strong>App Development</strong><p>12th July 2026 • 9–10 AM</p></div></li>
+                  <li><span class="badge badge-day">18</span><div><strong>MERN Stack</strong><p>14th July 2026 • 10–11 AM</p></div></li>
+                  <li><span class="badge badge-day">23</span><div><strong>Front End Developer</strong><p>15th July 2026 • 11–12 AM</p></div></li>
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-gradient"></div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark">Corso E‑Learning</div>
+        <p class="brand-copy">Fast, focused skill checks with instant, verifiable certificates.</p>
+        <form class="newsletter" onsubmit="return false;">
+          <input type="email" class="newsletter-input" placeholder="Your email" aria-label="Your email" />
+          <button class="btn btn-primary newsletter-btn">Subscribe</button>
+        </form>
+      </div>
+      <nav class="footer-links">
+        <div class="footer-col">
+          <h4>Company</h4>
+          <a href="about.html">About</a>
+          <a href="blog.html">Blog</a>
+          <a href="price.html">Pricing</a>
+        </div>
+        <div class="footer-col">
+          <h4>Courses</h4>
+          <a href="courses.html">Browse</a>
+          <a href="index.html#assessments">Popular Assessments</a>
+          <a href="index.html#how">How It Works</a>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="about.html">Contact</a>
+          <a href="about.html">FAQs</a>
+          <a href="about.html">Guides</a>
+        </div>
+        <div class="footer-col">
+          <h4>Follow</h4>
+          <a href="#" aria-label="LinkedIn">LinkedIn</a>
+          <a href="#" aria-label="Twitter">Twitter</a>
+          <a href="#" aria-label="YouTube">YouTube</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 ICTRD • All rights reserved</p>
+      </div>
+    </div>
+  </footer>
+  <script src="main.js"></script>
+</body>
+</html>
