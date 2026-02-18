@@ -1,3 +1,10 @@
+# Corso E-Learning
+
+- **Frontend**: static site / React app (deployed on Vercel from this repo).
+- **Backend**: CodeIgniter 4 API in the `backend/` folder (deploy to a PHP host; not built by Vercel).
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
