@@ -18,6 +18,7 @@
         <a href="index.html#learners">Learners</a>
         
         <a href="verify.html">Verify Certificate</a>
+        <a class="nav-bell" href="dashboard.html#notifications" aria-label="Notifications">🔔</a>
         <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
         <div class="nav-profile-menu" hidden>
           <a class="btn btn-outline" href="dashboard.html">Dashboard</a>
@@ -89,53 +90,73 @@
       </div>
     </div>
   </footer>
+  <script>window.CORSO_API_BASE='http://localhost/backend/public/api/v1';</script>
   <script src="main.js"></script>
   <script>
     (function () {
       var user = null;
       try { user = JSON.parse(localStorage.getItem('sessionUser') || 'null'); } catch (e) {}
       if (!(user && user.email)) { location.href = 'login.html'; return; }
-      var list = [];
-      try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
-      var host = (location.origin || '') + '/public/verify.html?id=';
       var container = document.getElementById('cert-list');
-      if (!list.length) {
-        var empty = document.createElement('p');
-        empty.textContent = 'No certificates yet. Take a quick skill check to generate one.';
-        container.appendChild(empty);
-        return;
-      }
-      var grid = document.createElement('div');
-      grid.className = 'assessments-grid';
-      list.slice().reverse().forEach(function (c) {
-        var card = document.createElement('article');
-        card.className = 'feature-card';
-        var title = document.createElement('h3');
-        title.textContent = c.name + ' — ' + Math.round((c.score / c.total) * 100) + '%';
-        var info = document.createElement('p');
-        var d = new Date(c.ts);
-        info.textContent = 'ID ' + c.id + ' • ' + d.toLocaleString();
-        var actions = document.createElement('div');
-        actions.className = 'subpage-buttons';
-        var view = document.createElement('a');
-        view.className = 'btn btn-outline';
-        view.href = 'verify.html?id=' + encodeURIComponent(c.id);
-        view.textContent = 'View';
-        var share = document.createElement('button');
-        share.className = 'btn btn-outline';
-        share.textContent = 'Copy link';
-        share.addEventListener('click', function () {
-          var link = host + encodeURIComponent(c.id);
-          navigator.clipboard && navigator.clipboard.writeText(link);
+      function renderList(list) {
+        if (!list || !list.length) {
+          var empty = document.createElement('p');
+          empty.textContent = 'No certificates yet. Take a quick skill check to generate one.';
+          container.appendChild(empty);
+          return;
+        }
+        var host = (location.origin || '') + '/public/verify.html?id=';
+        var grid = document.createElement('div');
+        grid.className = 'assessments-grid';
+        list.slice().reverse().forEach(function (c) {
+          var card = document.createElement('article');
+          card.className = 'feature-card';
+          var title = document.createElement('h3');
+          title.textContent = c.name + ' — ' + Math.round((c.score / c.total) * 100) + '%';
+          var info = document.createElement('p');
+          var d = new Date(c.ts || c.issued_at || Date.now());
+          info.textContent = 'ID ' + c.id + ' • ' + new Date(d).toLocaleString();
+          var actions = document.createElement('div');
+          actions.className = 'subpage-buttons';
+          var view = document.createElement('a');
+          view.className = 'btn btn-outline';
+          view.href = 'verify.html?id=' + encodeURIComponent(c.id);
+          view.textContent = 'View';
+          var share = document.createElement('button');
+          share.className = 'btn btn-outline';
+          share.textContent = 'Copy link';
+          share.addEventListener('click', function () {
+            var link = host + encodeURIComponent(c.id);
+            navigator.clipboard && navigator.clipboard.writeText(link);
+          });
+          actions.appendChild(view);
+          actions.appendChild(share);
+          card.appendChild(title);
+          card.appendChild(info);
+          card.appendChild(actions);
+          grid.appendChild(card);
         });
-        actions.appendChild(view);
-        actions.appendChild(share);
-        card.appendChild(title);
-        card.appendChild(info);
-        card.appendChild(actions);
-        grid.appendChild(card);
-      });
-      container.appendChild(grid);
+        container.appendChild(grid);
+      }
+      if (window.corsoApi && window.corsoApi.base) {
+        window.corsoApi.get('/certificates')
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function (rows) {
+            var mapped = (rows || []).map(function (r) {
+              return { id: r.id, name: r.name, course: r.course, score: r.score, total: r.total, ts: Date.parse(r.issued_at || '') || Date.now() };
+            });
+            renderList(mapped);
+          })
+          .catch(function () {
+            var list = [];
+            try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+            renderList(list);
+          });
+      } else {
+        var list = [];
+        try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+        renderList(list);
+      }
     })();
   </script>
 </body>

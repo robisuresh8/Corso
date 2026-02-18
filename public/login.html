@@ -167,6 +167,7 @@
       </div>
     </div>
   </footer>
+  <script>window.CORSO_API_BASE='http://localhost/backend/public/api/v1';</script>
   <script src="main.js"></script>
   <script>
     (function () {
@@ -227,8 +228,24 @@
           if (!name.value.trim()) errors.push('Name required');
           if (errors.length) return;
           var user = { email: email2.value, name: name.value.trim() };
-          localStorage.setItem('sessionUser', JSON.stringify(user));
-          location.href = 'dashboard.html';
+          if (window.corsoApi && window.corsoApi.base) {
+            window.corsoApi.post('/auth/register', { name: user.name, email: user.email, password: pwd.value })
+              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+              .then(function () { return window.corsoApi.post('/auth/login', { email: user.email, password: pwd.value }); })
+              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+              .then(function (data) {
+                try { localStorage.setItem('apiToken', data.token || ''); } catch (e) {}
+                localStorage.setItem('sessionUser', JSON.stringify(data.user || user));
+                location.href = 'dashboard.html';
+              })
+              .catch(function () {
+                localStorage.setItem('sessionUser', JSON.stringify(user));
+                location.href = 'dashboard.html';
+              });
+          } else {
+            localStorage.setItem('sessionUser', JSON.stringify(user));
+            location.href = 'dashboard.html';
+          }
         });
       }
       var login = document.querySelector('.auth-login .auth-form');
@@ -237,8 +254,25 @@
           e.preventDefault();
           var email = document.getElementById('email').value;
           var user = { email: email };
-          localStorage.setItem('sessionUser', JSON.stringify(user));
-          location.href = 'dashboard.html';
+          var pwdEl = document.getElementById('password');
+          var pwd = pwdEl ? pwdEl.value : '';
+          if (window.corsoApi && window.corsoApi.base) {
+            window.corsoApi.post('/auth/login', { email: email, password: pwd })
+              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+              .then(function (data) {
+                try { localStorage.setItem('apiToken', data.token || ''); } catch (e) {}
+                var u = data.user || user;
+                localStorage.setItem('sessionUser', JSON.stringify(u));
+                location.href = 'dashboard.html';
+              })
+              .catch(function () {
+                localStorage.setItem('sessionUser', JSON.stringify(user));
+                location.href = 'dashboard.html';
+              });
+          } else {
+            localStorage.setItem('sessionUser', JSON.stringify(user));
+            location.href = 'dashboard.html';
+          }
         });
       }
     })();

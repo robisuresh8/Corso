@@ -18,6 +18,7 @@
         <a href="index.html#learners">Learners</a>
         
         <a href="verify.html">Verify Certificate</a>
+        <a class="nav-bell" href="dashboard.html#notifications" aria-label="Notifications">🔔</a>
         <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
         <div class="nav-profile-menu" hidden>
           <a class="btn btn-outline" href="dashboard.html">Dashboard</a>
@@ -118,6 +119,7 @@
       </div>
     </div>
   </footer>
+  <script>window.CORSO_API_BASE='http://localhost/backend/public/api/v1';</script>
   <script src="main.js"></script>
   <script>
     (function () {
@@ -134,9 +136,9 @@
       try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
       function render(cert) {
         var pct = Math.round((cert.score / cert.total) * 100);
-        var d = new Date(cert.ts);
+        var d = new Date(cert.ts || cert.issued_at || Date.now());
         var link = (location.origin || '') + '/public/verify.html?id=' + encodeURIComponent(cert.id);
-        info.innerHTML = 'ID ' + cert.id + ' • ' + cert.name + ' • Score ' + pct + '% • Issued ' + d.toLocaleString() + ' ';
+        info.innerHTML = 'ID ' + cert.id + ' • ' + (cert.name || '') + ' • Score ' + pct + '% • Issued ' + new Date(d).toLocaleString() + ' ';
         var copy = document.createElement('button');
         copy.className = 'btn btn-outline';
         copy.textContent = 'Copy Verification Link';
@@ -158,12 +160,27 @@
         info.appendChild(copy);
       }
       function verifyById(id) {
-        var cert = list.find(function (c) { return String(c.id).trim() === String(id).trim(); });
-        if (!cert) {
-          info.textContent = 'Invalid or unavailable certificate ID.';
-          return;
+        var useApi = window.corsoApi && window.corsoApi.base;
+        if (useApi) {
+          window.corsoApi.get('/certificates/verify?id=' + encodeURIComponent(id))
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function (data) {
+              var cert = { id: data.id, name: data.name, course: data.course, score: data.score, total: data.total, issued_at: data.issued_at };
+              render(cert);
+            })
+            .catch(function () {
+              var cert = list.find(function (c) { return String(c.id).trim() === String(id).trim(); });
+              if (!cert) { info.textContent = 'Invalid or unavailable certificate ID.'; return; }
+              render(cert);
+            });
+        } else {
+          var cert = list.find(function (c) { return String(c.id).trim() === String(id).trim(); });
+          if (!cert) {
+            info.textContent = 'Invalid or unavailable certificate ID.';
+            return;
+          }
+          render(cert);
         }
-        render(cert);
       }
       var qpId = params.get('id');
       if (qpId) verifyById(qpId);

@@ -1,6 +1,29 @@
 (function () {
+  if (!window.corsoApi) {
+    var base = window.CORSO_API_BASE || '';
+    window.corsoApi = {
+      base: base,
+      token: function () { try { return localStorage.getItem('apiToken') || ''; } catch (e) { return ''; } },
+      get: function (path) {
+        if (!base) return Promise.reject(new Error('noapi'));
+        var h = { 'Accept': 'application/json' };
+        var t = this.token();
+        if (t) h['Authorization'] = 'Bearer ' + t;
+        return fetch(base + path, { method: 'GET', headers: h });
+      },
+      post: function (path, data) {
+        if (!base) return Promise.reject(new Error('noapi'));
+        var h = { 'Content-Type': 'application/json', 'Accept': 'application/json' };
+        var t = this.token();
+        if (t) h['Authorization'] = 'Bearer ' + t;
+        return fetch(base + path, { method: 'POST', headers: h, body: JSON.stringify(data || {}) });
+      }
+    };
+  }
   function init() {
     document.documentElement.classList.add('js');
+    document.documentElement.setAttribute('data-theme', 'dark');
+
     var menuToggle = document.querySelector('.menu-toggle');
     var nav = document.querySelector('.nav');
     var header = document.querySelector('.header');
@@ -102,7 +125,7 @@
       document.querySelectorAll('#startSkillCheck').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var target = document.getElementById('assessments');
-          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (target) target.scrollIntoView({ block: 'start' });
         });
       });
     }
@@ -485,6 +508,17 @@
               try { list = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
               list.push(cert);
               localStorage.setItem('certificates', JSON.stringify(list));
+              try {
+                if (window.corsoApi && window.corsoApi.base) {
+                  window.corsoApi.post('/certificates', { id: id, name: cert.name, course: cert.course, score: cert.score, total: cert.total })
+                    .then(function (r) {
+                      if (r.status === 401) {
+                        share.innerHTML = 'Verification link: ' + link + ' <span style="color:var(--text-muted);font-size:0.85em;">(Log in to save certificate to your account)</span>';
+                      }
+                    })
+                    .catch(function () {});
+                }
+              } catch (e) {}
               var canvas = document.createElement('canvas');
               canvas.width = 800;
               canvas.height = 560;
@@ -658,6 +692,19 @@
         location.href = 'index.html';
       });
     }
+    var themeCheckbox = document.querySelector('.dash-theme-checkbox');
+    var themeThumb = document.querySelector('.dash-theme-thumb');
+    if (themeCheckbox) {
+      themeCheckbox.checked = (document.documentElement.getAttribute('data-theme') !== 'light');
+      if (themeThumb) themeThumb.textContent = themeCheckbox.checked ? '🌙' : '☀️';
+      themeCheckbox.addEventListener('change', function () {
+        var next = themeCheckbox.checked ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('corsoTheme', next); } catch (e) {}
+        if (themeThumb) themeThumb.textContent = themeCheckbox.checked ? '🌙' : '☀️';
+      });
+    }
+
     var dash = document.querySelector('.dashboard');
     if (dash) {
       var u = null;
@@ -667,28 +714,51 @@
         var n = u && (u.name || (u.email || '').split('@')[0]) || 'User';
         nameEl.textContent = n;
       }
-      var chart = document.querySelector('.dash-chart');
-      if (chart && chart.getContext) {
-        var ctx = chart.getContext('2d');
-        ctx.clearRect(0, 0, chart.width, chart.height);
-        ctx.fillStyle = '#0b0f18';
-        ctx.fillRect(0, 0, chart.width, chart.height);
-        ctx.strokeStyle = '#1f2937';
-        ctx.lineWidth = 1;
-        for (var i = 0; i <= 4; i++) {
-          var y = 20 + i * 40;
-          ctx.beginPath(); ctx.moveTo(20, y); ctx.lineTo(chart.width - 20, y); ctx.stroke();
+      var statsCerts = [];
+      try { statsCerts = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+      if (!Array.isArray(statsCerts)) statsCerts = [];
+      var totalCerts = statsCerts.length;
+      var passedCount = statsCerts.filter(function (c) { var pct = (c.score / (c.total || 10)) * 100; return pct >= 60; }).length;
+      var avgScore = totalCerts ? Math.round(statsCerts.reduce(function (sum, c) { return sum + (c.score / (c.total || 10)) * 100; }, 0) / totalCerts) : 0;
+      var totalEl = document.querySelector('.dash-stat-value[data-stat="total"]');
+      var averageEl = document.querySelector('.dash-stat-value[data-stat="average"]');
+      var passedEl = document.querySelector('.dash-stat-value[data-stat="passed"]');
+      if (totalEl) totalEl.textContent = totalCerts;
+      if (averageEl) averageEl.textContent = avgScore + '%';
+      if (passedEl) passedEl.textContent = passedCount;
+      var certsList = document.querySelector('.dash-certs');
+      if (certsList) {
+        var clist = [];
+        try { clist = JSON.parse(localStorage.getItem('certificates') || '[]'); } catch (e) {}
+        if (!Array.isArray(clist)) clist = [];
+        clist = clist.slice().sort(function(a,b){ return (b.ts||0)-(a.ts||0); }).slice(0,3);
+        if (!clist.length) {
+          var none = document.createElement('p');
+          none.textContent = 'No certificates yet.';
+          certsList.parentNode.replaceChild(none, certsList);
+        } else {
+          clist.forEach(function (c) {
+            var li = document.createElement('li');
+            var badge = document.createElement('span');
+            badge.className = 'badge badge-user';
+            var initials = (c.name || 'SC').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+            badge.textContent = initials;
+            var center = document.createElement('div');
+            var title = document.createElement('strong');
+            title.textContent = c.name;
+            var meta = document.createElement('div');
+            meta.className = 'meta';
+            var issuedDate = c.issued_at ? new Date(c.issued_at) : new Date(c.ts || Date.now());
+            meta.textContent = 'Issued ' + issuedDate.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            center.appendChild(title); center.appendChild(meta);
+            var right = document.createElement('a');
+            right.className = 'dash-link';
+            right.href = 'verify.html?id=' + encodeURIComponent(c.id);
+            right.textContent = 'View';
+            li.appendChild(badge); li.appendChild(center); li.appendChild(right);
+            certsList.appendChild(li);
+          });
         }
-        var points = [28, 22, 26, 34, 30];
-        ctx.strokeStyle = '#06b6d4';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        for (var j = 0; j < points.length; j++) {
-          var x = 20 + j * ((chart.width - 40) / (points.length - 1));
-          var y2 = 20 + (40 * (4 - (points[j] - 20) / 2));
-          if (j === 0) ctx.moveTo(x, y2); else ctx.lineTo(x, y2);
-        }
-        ctx.stroke();
       }
       var monthEl = document.querySelector('.dash-month');
       var calEl = document.querySelector('.dash-calendar');

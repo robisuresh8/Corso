@@ -17,7 +17,7 @@
         <a href="index.html#features">Features</a>
         <a href="index.html#assessments">Assessments</a>
         <a href="verify.html">Verify Certificate</a>
-        <a href="my-certificates.html" class="nav-mycerts">My Certificates</a>
+        <a class="nav-bell" href="dashboard.html#notifications" aria-label="Notifications">🔔</a>
         <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
         <div class="nav-profile-menu" hidden>
           <a class="btn btn-outline" href="dashboard.html">Dashboard</a>
@@ -36,41 +36,44 @@
       <div class="container">
         <div class="dashboard-grid">
           <aside class="dash-sidebar">
-            <div class="dash-brand">Corso</div>
+            <div class="dash-brand"><span class="dash-brand-icon" aria-hidden="true">🎓</span><span>Corso</span></div>
             <nav class="dash-menu">
-              <a class="is-active">Home</a>
-              <a>Classes</a>
-              <a>Documents</a>
-              <a href="my-certificates.html">My Certificates</a>
-              <a>Bookmarks</a>
-              <a>Messages</a>
-              <a>Settings</a>
-              <button class="dash-signout">Sign Out</button>
+              <a class="is-active" href="dashboard.html" aria-label="Home"><span class="mi">🏠</span><span>Home</span></a>
+              <a href="index.html#assessments" aria-label="Courses"><span class="mi">📚</span><span>Courses</span></a>
+              <a href="my-certificates.html" aria-label="My Certificates"><span class="mi">📜</span><span>My Certificates</span></a>
+              <a href="#notifications" aria-label="Notifications"><span class="mi">ðŸ””</span><span>Notifications</span></a>
+              <button class="dash-signout" type="button" aria-label="Sign Out">Sign Out</button>
             </nav>
           </aside>
           <section class="dash-main">
-            <div class="dash-search">
-              <input type="text" placeholder="Search courses, documents, activities…" />
-              <div class="dash-search-actions">
-                <button title="Light">☀️</button>
-                <button title="Dark">🌙</button>
+            <div class="dash-topbar">
+              <div class="dash-search-wrap">
+                <span class="dash-search-icon" aria-hidden="true">🔍</span>
+                <input type="text" class="dash-search-input" placeholder="Search courses, documents, activities…" aria-label="Search" />
+              </div>
+              <div class="dash-topbar-right">
+                <label class="dash-theme-toggle" aria-label="Toggle theme">
+                  <input type="checkbox" class="dash-theme-checkbox" checked aria-checked="true" />
+                  <span class="dash-theme-track"><span class="dash-theme-thumb" aria-hidden="true">🌙</span></span>
+                </label>
               </div>
             </div>
             <div class="dash-welcome">
               <div class="dash-welcome-text">
                 <h2 class="dash-title">Welcome back, <span class="dash-user">User</span> 👋</h2>
-                <p>You've learned <strong class="dash-progress-goal">76%</strong> of your goal this week.</p>
+                <p class="dash-welcome-sub">You've learned <strong class="dash-progress-goal">76%</strong> of your goal this week. Keep it up and improve your progress.</p>
               </div>
-              <div class="dash-illustration"></div>
             </div>
             <div class="dash-row">
-              <div class="dash-card">
+              <div class="dash-card dash-stats-card">
                 <div class="dash-card-head">
-                  <div>Performance</div>
-                  <div>Overall</div>
+                  <div>Your progress</div>
+                  <a class="dash-link" href="my-certificates.html">View all</a>
                 </div>
-                <div class="dash-card-body">
-                  <canvas class="dash-chart" width="480" height="160"></canvas>
+                <div class="dash-card-body dash-stats-body">
+                  <div class="dash-stat"><span class="dash-stat-value" data-stat="total">0</span><span class="dash-stat-label">Certificates earned</span></div>
+                  <div class="dash-stat"><span class="dash-stat-value" data-stat="average">0%</span><span class="dash-stat-label">Average score</span></div>
+                  <div class="dash-stat"><span class="dash-stat-value" data-stat="passed">0</span><span class="dash-stat-label">Skill checks passed</span></div>
                 </div>
               </div>
               <div class="dash-card">
@@ -79,65 +82,49 @@
                 </div>
                 <div class="dash-card-body">
                   <ul class="dash-progress-list">
-                    <li><span>Web Development</span><span class="pct">78%</span></li>
-                    <li><span>App Development</span><span class="pct">39%</span></li>
-                    <li><span>MERN Stack</span><span class="pct">21%</span></li>
-                    <li><span>Front End Developer</span><span class="pct">90%</span></li>
+                    <li><a href="index.html#assessments"><span class="progress-label">Web Development</span></a><span class="progress-ring-wrap"><span class="progress-ring" data-pct="78"></span><span class="pct">78%</span></span></li>
+                    <li><a href="index.html#assessments"><span class="progress-label">App Development</span></a><span class="progress-ring-wrap"><span class="progress-ring" data-pct="39"></span><span class="pct">39%</span></span></li>
+                    <li><a href="index.html#assessments"><span class="progress-label">MERN Stack</span></a><span class="progress-ring-wrap"><span class="progress-ring" data-pct="21"></span><span class="pct">21%</span></span></li>
+                    <li><a href="index.html#assessments"><span class="progress-label">Front End Developer</span></a><span class="progress-ring-wrap"><span class="progress-ring" data-pct="90"></span><span class="pct">90%</span></span></li>
                   </ul>
                 </div>
               </div>
             </div>
             <div class="dash-row">
-              <div class="dash-card">
+              <div class="dash-card" id="notifications">
                 <div class="dash-card-head">
-                  <div>Messages</div>
-                  <a class="dash-link">View All</a>
+                  <div>Notifications</div>
+                  <a class="dash-link" href="#notifications">See all</a>
                 </div>
                 <div class="dash-card-body">
                   <ul class="dash-messages">
-                    <li><span class="badge badge-user">MA</span><div><strong>Mayur Aglave</strong><p>Just finished the first chapter.</p></div><span class="time">08:30 pm</span></li>
-                    <li><span class="badge badge-user">OT</span><div><strong>Om Tiwari</strong><p>Check the formulas in these images.</p></div><span class="time">12:02 pm</span></li>
-                    <li><span class="badge badge-user">JA</span><div><strong>Joshua Anglo</strong><p>Submit your assignment.</p></div><span class="time">10:11 am</span></li>
+                    <li><span class="badge badge-user">CI</span><div><strong>Certificate Issued</strong><p>Saved to your account</p></div><span class="time">Now</span></li>
+                    <li><span class="badge badge-user">SK</span><div><strong>New Skill Check</strong><p><a href="index.html#assessments">Try “Python Basics”</a></p></div><span class="time">1h</span></li>
+                    <li><span class="badge badge-user">VR</span><div><strong>Verification</strong><p>Use the Verify link in the top bar</p></div><span class="time">Today</span></li>
                   </ul>
                 </div>
               </div>
               <div class="dash-card">
                 <div class="dash-card-head">
-                  <div>Top Performing Student</div>
+                  <div>Quick Links</div>
                 </div>
                 <div class="dash-card-body">
-                  <ul class="dash-top">
-                    <li><span class="badge badge-user">JA</span><strong>Joshua Anglo</strong><span class="score">9,870 points</span></li>
-                    <li><span class="badge badge-user">AA</span><strong>Arnav Asher</strong><span class="score">8,120 points</span></li>
-                    <li><span class="badge badge-user">OT</span><strong>Om Tiwari</strong><span class="score">6,970 points</span></li>
-                    <li><span class="badge badge-user">MA</span><strong>Mayur Aglave</strong><span class="score">5,750 points</span></li>
-                  </ul>
+                  <div class="dash-quick">
+                    <a class="btn btn-outline" href="index.html#assessments">Start Skill Check</a>
+                    <a class="btn btn-outline" href="index.html#assessments">Browse Courses</a>
+                    <a class="btn btn-outline" href="verify.html">Verify Certificate</a>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
           <aside class="dash-aside">
-            <div class="dash-card">
+            <div class="dash-card" id="recent-certs">
               <div class="dash-card-head">
-                <div>My Progress</div>
-                <div class="dash-month"></div>
+                <div>Recent Certificates</div>
               </div>
               <div class="dash-card-body">
-                <div class="dash-calendar"></div>
-              </div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-card-head">
-                <div>Upcoming Activities</div>
-                <a class="dash-link">See all</a>
-              </div>
-              <div class="dash-card-body">
-                <ul class="dash-activities">
-                  <li><span class="badge badge-day">8</span><div><strong>Web Development</strong><p>10th July 2026 • 8–9 AM</p></div></li>
-                  <li><span class="badge badge-day">13</span><div><strong>App Development</strong><p>12th July 2026 • 9–10 AM</p></div></li>
-                  <li><span class="badge badge-day">18</span><div><strong>MERN Stack</strong><p>14th July 2026 • 10–11 AM</p></div></li>
-                  <li><span class="badge badge-day">23</span><div><strong>Front End Developer</strong><p>15th July 2026 • 11–12 AM</p></div></li>
-                </ul>
+                <ul class="dash-certs"></ul>
               </div>
             </div>
           </aside>
@@ -146,6 +133,7 @@
     </section>
   </main>
   
+  <script>window.CORSO_API_BASE='http://localhost/backend/public/api/v1';</script>
   <script src="main.js"></script>
 </body>
 </html>

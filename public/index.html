@@ -18,6 +18,11 @@
         <a href="#learners">Learners</a>
         
         <a href="verify.html">Verify Certificate</a>
+        <label class="dash-theme-toggle nav-theme-toggle" aria-label="Toggle theme">
+          <input type="checkbox" class="dash-theme-checkbox" checked aria-checked="true" />
+          <span class="dash-theme-track"><span class="dash-theme-thumb" aria-hidden="true">🌙</span></span>
+        </label>
+        <a class="nav-bell" href="dashboard.html#notifications" aria-label="Notifications">🔔</a>
         <button class="nav-profile" aria-haspopup="true" aria-expanded="false"><span>👤</span><span class="nav-name">Profile</span></button>
         <div class="nav-profile-menu" hidden>
           <a class="btn btn-outline" href="dashboard.html">Dashboard</a>
@@ -347,6 +352,7 @@
       </div>
     </div>
   </footer>
+  <script>window.CORSO_API_BASE='http://localhost/backend/public/api/v1';</script>
   <script src="main.js"></script>
 </body>
 </html>
