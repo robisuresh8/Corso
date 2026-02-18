@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body>
   <header class="header">
@@ -74,6 +74,7 @@
                   </label>
                   <a class="link" href="#">Forgot password?</a>
                 </div>
+                <div class="auth-error" id="login-error" role="alert" hidden></div>
                 <button class="btn btn-primary auth-submit">Login</button>
                 <div class="auth-divider"><span>or continue with</span></div>
                 <div class="social-row">
@@ -107,6 +108,7 @@
                   </label>
                   <span></span>
                 </div>
+                <div class="auth-error" id="signup-error" role="alert" hidden></div>
                 <button class="btn btn-primary auth-submit">Sign Up</button>
                 <div class="auth-divider"><span>or continue with</span></div>
                 <div class="social-row">
@@ -168,7 +170,7 @@
     </div>
   </footer>
   <script>window.CORSO_API_BASE='http://localhost/backend/public/api/v1';</script>
-  <script src="main.js"></script>
+  <script src="main.js?v=2"></script>
   <script>
     (function () {
       var tabs = document.querySelectorAll('.auth-tabs .tab-btn');
@@ -218,61 +220,96 @@
           var s = strength(pwd.value);
           bar.style.width = (s * 20) + '%';
         });
+        var signupErrorEl = document.getElementById('signup-error');
+        function showSignupError(msg) {
+          if (signupErrorEl) {
+            signupErrorEl.textContent = msg;
+            signupErrorEl.hidden = false;
+          }
+        }
+        function hideSignupError() {
+          if (signupErrorEl) { signupErrorEl.textContent = ''; signupErrorEl.hidden = true; }
+        }
         signup.addEventListener('submit', function (e) {
           e.preventDefault();
+          hideSignupError();
           var errors = [];
           var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email2.value);
           if (!emailOk) errors.push('Invalid email');
-          if (pwd.value.length < 8) errors.push('Password too short');
-          if (pwd.value !== confirm.value) errors.push('Passwords do not match');
-          if (!name.value.trim()) errors.push('Name required');
-          if (errors.length) return;
-          var user = { email: email2.value, name: name.value.trim() };
-          if (window.corsoApi && window.corsoApi.base) {
-            window.corsoApi.post('/auth/register', { name: user.name, email: user.email, password: pwd.value })
-              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-              .then(function () { return window.corsoApi.post('/auth/login', { email: user.email, password: pwd.value }); })
-              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-              .then(function (data) {
-                try { localStorage.setItem('apiToken', data.token || ''); } catch (e) {}
-                localStorage.setItem('sessionUser', JSON.stringify(data.user || user));
-                location.href = 'dashboard.html';
-              })
-              .catch(function () {
-                localStorage.setItem('sessionUser', JSON.stringify(user));
-                location.href = 'dashboard.html';
-              });
-          } else {
-            localStorage.setItem('sessionUser', JSON.stringify(user));
-            location.href = 'dashboard.html';
+          if (pwd.value.length < 8) errors.push('Password must be at least 8 characters');
+          if (pwd.value !== confirm.value) {
+            errors.push('Passwords do not match');
+            showSignupError('Passwords do not match.');
+            alert('Passwords do not match. Please enter the same password in both fields.');
+            return;
           }
+          if (!name.value.trim()) errors.push('Name required');
+          if (errors.length) {
+            showSignupError(errors[0]);
+            return;
+          }
+          var user = { email: email2.value, name: name.value.trim() };
+          if (!window.corsoApi || !window.corsoApi.base) {
+            showSignupError('Sign up is unavailable. Please ensure the server is running.');
+            return;
+          }
+          window.corsoApi.post('/auth/register', { name: user.name, email: user.email, password: pwd.value })
+            .then(function (r) { if (!r.ok) return Promise.reject(r); return r.json(); })
+            .then(function () { return window.corsoApi.post('/auth/login', { email: user.email, password: pwd.value }); })
+            .then(function (r) { if (!r.ok) return Promise.reject(r); return r.json(); })
+            .then(function (data) {
+              try { localStorage.setItem('apiToken', data.token || ''); } catch (e) {}
+              localStorage.setItem('sessionUser', JSON.stringify(data.user || user));
+              location.href = 'dashboard.html';
+            })
+            .catch(function (r) {
+              var msg = 'Sign up failed. ';
+              if (r && r.status === 409) msg += 'This email is already registered.';
+              else if (r && r.status >= 400) msg += 'Please check your details and try again.';
+              else msg += 'Please try again later.';
+              showSignupError(msg);
+            });
         });
       }
       var login = document.querySelector('.auth-login .auth-form');
+      var loginErrorEl = document.getElementById('login-error');
+      function showLoginError(msg) {
+        if (loginErrorEl) {
+          loginErrorEl.textContent = msg || 'Invalid email or password.';
+          loginErrorEl.hidden = false;
+        }
+      }
+      function hideLoginError() {
+        if (loginErrorEl) { loginErrorEl.textContent = ''; loginErrorEl.hidden = true; }
+      }
       if (login) {
         login.addEventListener('submit', function (e) {
           e.preventDefault();
+          hideLoginError();
           var email = document.getElementById('email').value;
           var user = { email: email };
           var pwdEl = document.getElementById('password');
           var pwd = pwdEl ? pwdEl.value : '';
-          if (window.corsoApi && window.corsoApi.base) {
-            window.corsoApi.post('/auth/login', { email: email, password: pwd })
-              .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-              .then(function (data) {
-                try { localStorage.setItem('apiToken', data.token || ''); } catch (e) {}
-                var u = data.user || user;
-                localStorage.setItem('sessionUser', JSON.stringify(u));
-                location.href = 'dashboard.html';
-              })
-              .catch(function () {
-                localStorage.setItem('sessionUser', JSON.stringify(user));
-                location.href = 'dashboard.html';
-              });
-          } else {
-            localStorage.setItem('sessionUser', JSON.stringify(user));
-            location.href = 'dashboard.html';
+          if (!window.corsoApi || !window.corsoApi.base) {
+            showLoginError('Login is unavailable. Please ensure the server is running.');
+            return;
           }
+          window.corsoApi.post('/auth/login', { email: email, password: pwd })
+            .then(function (r) {
+              if (!r.ok) return Promise.reject(r);
+              return r.json();
+            })
+            .then(function (data) {
+              try { localStorage.setItem('apiToken', data.token || ''); } catch (e) {}
+              var u = data.user || user;
+              localStorage.setItem('sessionUser', JSON.stringify(u));
+              location.href = 'dashboard.html';
+            })
+            .catch(function (r) {
+              if (r && r.status === 401) showLoginError('Invalid email or password.');
+              else if (r && r.status >= 400) showLoginError('Invalid email or password.');
+              else showLoginError('Could not reach server. Please try again.');
+            });
         });
       }
     })();
