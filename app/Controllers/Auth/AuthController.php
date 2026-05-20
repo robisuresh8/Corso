@@ -313,67 +313,48 @@ class AuthController extends BaseController
             return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid email format']);
         }
 
-        $userModel = new UserModel();
-        $db = \Config\Database::connect();
+        $userModel    = new UserModel();
+        $visitorModel = new \App\Models\VisitorModel();
 
-        $activationToken = bin2hex(random_bytes(32)); // 64 chars
-        $role = 'student';
-
-        // Dummy password: login is blocked until activation.
-        $dummyPassword = bin2hex(random_bytes(8));
-        $passwordHash = password_hash($dummyPassword, PASSWORD_DEFAULT);
-
-        $existing = $userModel->where('email', $email)->first();
-
-        // If user exists and already has an activation token, reuse it
-        if ($existing && !empty($existing['activation_token'])) {
-            $activationToken = $existing['activation_token'];
+        // Active user wapas register kare toh uska account inactive mat karo
+        $activeUser = $userModel->where('email', $email)->where('status', 'active')->first();
+        if ($activeUser) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'error' => 'An active account already exists with this email. Please log in.'
+            ]);
         }
 
-        $updates = [
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone !== '' ? $phone : null,
-            'role' => $role,
-            'status' => 'inactive',
-            'email_verified' => 1,
-            'activation_token' => $activationToken,
-            'force_password_change' => 0,
-        ];
+        $activationToken = bin2hex(random_bytes(32));
 
-        if (!$db->fieldExists('phone', 'users')) {
-            unset($updates['phone']);
-        }
-        if (!$db->fieldExists('force_password_change', 'users')) {
-            unset($updates['force_password_change']);
-        }
-
-        if ($db->fieldExists('password_hash', 'users')) {
-            $updates['password_hash'] = $passwordHash;
-        } elseif ($db->fieldExists('password', 'users')) {
-            $updates['password'] = $passwordHash;
-        }
-
-        if ($existing) {
-            $userModel->update($existing['id'], $updates);
-            $user = $userModel->find($existing['id']);
+        // Visitors table mein check karo — existing visitor ho toh token reuse karo
+        $existingVisitor = $visitorModel->where('email', $email)->first();
+        if ($existingVisitor && !empty($existingVisitor['cookie_token'])) {
+            $activationToken = $existingVisitor['cookie_token'];
+            $visitorModel->update($existingVisitor['id'], [
+                'name'          => $name,
+                'phone'         => $phone !== '' ? $phone : null,
+                'is_registered' => 0,
+                'last_active'   => date('Y-m-d H:i:s'),
+                'expires_at'    => date('Y-m-d H:i:s', strtotime('+7 days')),
+            ]);
         } else {
-            $userId = $userModel->insert($updates);
-            $user = $userModel->find($userId);
-        }
-
-        if (!$user) {
-            return $this->response->setStatusCode(500)->setJSON(['error' => 'Failed to create pre-registration']);
+            $visitorModel->insert([
+                'name'          => $name,
+                'email'         => $email,
+                'phone'         => $phone !== '' ? $phone : null,
+                'cookie_token'  => $activationToken,
+                'is_registered' => 0,
+                'last_active'   => date('Y-m-d H:i:s'),
+                'expires_at'    => date('Y-m-d H:i:s', strtotime('+7 days')),
+            ]);
         }
 
         return $this->response->setJSON([
             'user' => [
-                'id' => (int) $user['id'],
-                'name' => $user['name'] ?? '',
-                'email' => $user['email'] ?? '',
-                'role' => isset($user['role']) ? (string) $user['role'] : $role,
-                'status' => isset($user['status']) ? (string) $user['status'] : 'inactive',
-                'phone' => isset($user['phone']) ? (string) $user['phone'] : null,
+                'name'   => $name,
+                'email'  => $email,
+                'phone'  => $phone !== '' ? $phone : null,
+                'status' => 'inactive',
             ],
             'activation_token' => $activationToken,
         ]);
@@ -655,6 +636,46 @@ class AuthController extends BaseController
         );
 
         return $this->response->setJSON($generic);
+    }
+
+
+    /**
+     * Admin can reset any user password.
+     * POST /api/admin/reset-user-password  { "user_id": 5, "new_password": "..." }
+     */
+    public function adminResetUserPassword()
+    {
+        $data     = $this->request->getJSON(true) ?? [];
+        $targetId = (int) ($data['user_id'] ?? 0);
+        $newPass  = (string) ($data['new_password'] ?? '');
+
+        if (!$targetId || strlen($newPass) < 6) {
+            return $this->response->setStatusCode(400)
+                ->setJSON(['error' => 'user_id and new_password (min 6 chars) are required']);
+        }
+
+        $userModel = new UserModel();
+        $user = $userModel->find($targetId);
+        if (!$user) {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+        }
+
+        $db = \Config\Database::connect();
+        $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
+
+        $updates = [
+            $passwordField          => password_hash($newPass, PASSWORD_DEFAULT),
+            'force_password_change' => 1,
+        ];
+        if ($db->fieldExists('temp_password_source', 'users')) {
+            $updates['temp_password_source'] = 'admin_reset';
+        }
+        if ($db->fieldExists('forgot_password_expires_at', 'users')) {
+            $updates['forgot_password_expires_at'] = null;
+        }
+
+        $userModel->update($targetId, $updates);
+        return $this->response->setJSON(['ok' => true, 'message' => 'Password reset successfully']);
     }
 
 }

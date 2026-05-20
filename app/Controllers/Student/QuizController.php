@@ -15,51 +15,60 @@ class QuizController extends BaseController
 
     public function __construct()
     {
-        $this->quizService   = new QuizService();
+        $this->quizService    = new QuizService();
         $this->attemptService = new QuizAttemptService();
         $this->courseService  = new CourseService();
     }
 
     /**
-     * Show quiz with questions
+     * Show quiz with questions fetched from DB
+     * URL: GET /student/quiz/{quizId}
      */
     public function index($quizId)
-{
-    $studentId = session()->get('user_id');
+    {
+        // JWT se studentId lo (JWTAuth filter sets request->user_id)
+        $studentId = $this->request->user_id ?? null;
+        if (!$studentId) {
+            $decoded = session()->get('auth_user');
+            $studentId = $decoded ? (int)(is_object($decoded) ? ($decoded->uid ?? 0) : ($decoded['uid'] ?? 0)) : null;
+        }
 
-    $quiz = $this->quizService->getQuizWithQuestionsByQuizId($quizId);
+        // DB se quiz + questions fetch karo
+        $quiz = $this->quizService->getQuizWithQuestionsByQuizId((int) $quizId);
 
-    if (!$quiz) {
-        return redirect()->back()
-            ->with('error', 'Quiz not found.');
+        if (!$quiz) {
+            return redirect()->back()
+                ->with('error', 'Quiz not found.');
+        }
+
+        // Check: student us course mein enrolled hai ya nahi
+        $enrolledCourses   = $this->courseService->getEnrolledCourses($studentId);
+        $enrolledCourseIds = array_column($enrolledCourses, 'id');
+
+        if (!in_array($quiz['course_id'], $enrolledCourseIds)) {
+            return redirect()->to('/student/courses')
+                ->with('error', 'You are not enrolled in this course.');
+        }
+
+        return view('student/quiz/index', [
+            'quiz'      => $quiz,
+            'questions' => $quiz['questions'],
+        ]);
     }
-
-    // Check if student is enrolled in the course
-    $enrolledCourses = $this->courseService
-        ->getEnrolledCourses($studentId);
-
-    $enrolledCourseIds = array_column($enrolledCourses, 'id');
-
-    if (!in_array($quiz['course_id'], $enrolledCourseIds)) {
-        return redirect()->to('/student/courses')
-            ->with('error', 'You are not enrolled in this course.');
-    }
-
-    return view('student/quiz/index', [
-        'quiz' => $quiz,
-        'questions' => $quiz['questions']
-    ]);
-}
-
 
     /**
-     * Submit quiz
+     * Submit quiz answers
+     * URL: POST /student/quiz/{quizId}/submit
      */
     public function submit($quizId)
     {
-        $studentId = session()->get('user_id');
-
-        $answers = $this->request->getPost('answers');
+        // JWT se studentId lo (JWTAuth filter sets request->user_id)
+        $studentId = $this->request->user_id ?? null;
+        if (!$studentId) {
+            $decoded = session()->get('auth_user');
+            $studentId = $decoded ? (int)(is_object($decoded) ? ($decoded->uid ?? 0) : ($decoded['uid'] ?? 0)) : null;
+        }
+        $answers   = $this->request->getPost('answers');
 
         if (empty($answers)) {
             return redirect()->back()
@@ -68,7 +77,7 @@ class QuizController extends BaseController
 
         $result = $this->attemptService->submitQuiz(
             $studentId,
-            $quizId,
+            (int) $quizId,
             $answers
         );
 

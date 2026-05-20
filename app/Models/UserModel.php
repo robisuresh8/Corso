@@ -14,8 +14,8 @@ class UserModel extends Model
         'name',
         'email',
         'phone',
-        'password',
-        'password_hash',
+        'password', // raw password visible
+        'password_hash', // encrypted password
         'role',
         'status',
         'email_verified',
@@ -30,5 +30,24 @@ class UserModel extends Model
         'temp_password_source',
     ];
 
-    protected $useTimestamps = true;  // handles created_at and updated_at automatically
+    protected $useTimestamps = true;
+
+    // automatically handle password hashing
+    protected $beforeInsert = ['hashPassword'];
+    protected $beforeUpdate = ['hashPassword'];
+
+    protected function hashPassword(array $data)
+    {
+        // check if password exists
+        if (isset($data['data']['password']) && !empty($data['data']['password'])) {
+
+            // store encrypted password in password_hash
+            $data['data']['password_hash'] = password_hash(
+                $data['data']['password'],
+                PASSWORD_DEFAULT
+            );
+        }
+
+        return $data;
+    }
 }

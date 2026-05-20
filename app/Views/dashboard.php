@@ -71,7 +71,7 @@
             <div class="dash-welcome">
               <div class="dash-welcome-text">
                 <h2 class="dash-title">Hi <span class="dash-user">User</span>!</h2>
-                <p class="dash-welcome-sub">You've completed <strong class="dash-progress-goal">76%</strong> of your goal this week. Start your learning today.</p>
+                <p class="dash-welcome-sub">Start your learning today.</p>
               </div>
               <div class="dash-welcome-visual" aria-hidden="true">📖</div>
             </div>
@@ -83,9 +83,9 @@
                   <a class="dash-link" href="<?= base_url('my-certificates') ?>">View all</a>
                 </div>
                 <div class="dash-card-body dash-stats-body">
-                  <div class="dash-stat"><span class="dash-stat-value" data-stat="total">0</span><span class="dash-stat-label">Certificates earned</span></div>
-                  <div class="dash-stat"><span class="dash-stat-value" data-stat="average">0%</span><span class="dash-stat-label">Average score</span></div>
-                  <div class="dash-stat"><span class="dash-stat-value" data-stat="passed">0</span><span class="dash-stat-label">Skill checks passed</span></div>
+                  <div class="dash-stat"><span class="dash-stat-value" id="stat-certs">—</span><span class="dash-stat-label">Certificates earned</span></div>
+                  <div class="dash-stat"><span class="dash-stat-value" id="stat-avg">—</span><span class="dash-stat-label">Average score</span></div>
+                  <div class="dash-stat"><span class="dash-stat-value" id="stat-passed">—</span><span class="dash-stat-label">Skill checks passed</span></div>
                 </div>
               </div>
               <div class="dash-card dash-activity-card">
@@ -94,7 +94,7 @@
                   <span class="dash-card-badge">Weekly</span>
                 </div>
                 <div class="dash-card-body dash-activity-body">
-                  <div class="dash-activity-value">5</div>
+                  <div class="dash-activity-value" id="stat-lessons">—</div>
                   <div class="dash-activity-label">lessons completed</div>
                 </div>
               </div>
@@ -106,7 +106,7 @@
                   <a class="dash-link" href="<?= base_url('my-certificates') ?>">See all</a>
                 </div>
                 <div class="dash-card-body">
-                  <ul class="dash-certs"></ul>
+                  <ul class="dash-certs" id="dash-certs-list"><li style="color:var(--text-muted);font-size:.9rem;">Loading...</li></ul>
                 </div>
               </div>
               <div class="dash-card" id="notifications">
@@ -134,37 +134,8 @@
                   </div>
                 </div>
                 <div class="dash-card-body">
-                  <ul class="dash-progress-list dash-courses-list">
-                    <li>
-                      <span class="dash-course-icon" style="background: rgba(249,115,22,0.2); color: #fb923c;">📂</span>
-                      <div class="dash-course-info">
-                        <a href="<?= base_url('/') ?>#assessments" class="dash-course-title">Data Science Fundamentals</a>
-                        <span class="dash-course-meta">By Corso</span>
-                        <div class="dash-course-progress-wrap"><div class="dash-course-progress-bar" style="width: 25%;"></div></div>
-                        <span class="dash-course-pct">25%</span>
-                      </div>
-                      <a href="<?= base_url('/') ?>#assessments" class="btn btn-outline dash-course-btn">View course</a>
-                    </li>
-                    <li>
-                      <span class="dash-course-icon" style="background: rgba(34,197,94,0.2); color: #4ade80;">📂</span>
-                      <div class="dash-course-info">
-                        <a href="<?= base_url('/') ?>#assessments" class="dash-course-title">Python Basics</a>
-                        <span class="dash-course-meta">By Corso</span>
-                        <div class="dash-course-progress-wrap"><div class="dash-course-progress-bar" style="width: 78%;"></div></div>
-                        <span class="dash-course-pct">78%</span>
-                      </div>
-                      <a href="<?= base_url('/') ?>#assessments" class="btn btn-outline dash-course-btn">View course</a>
-                    </li>
-                    <li>
-                      <span class="dash-course-icon" style="background: rgba(59,130,246,0.2); color: #60a5fa;">📂</span>
-                      <div class="dash-course-info">
-                        <a href="<?= base_url('/') ?>#assessments" class="dash-course-title">SQL Essentials</a>
-                        <span class="dash-course-meta">By Corso</span>
-                        <div class="dash-course-progress-wrap"><div class="dash-course-progress-bar" style="width: 10%;"></div></div>
-                        <span class="dash-course-pct">10%</span>
-                      </div>
-                      <a href="<?= base_url('/') ?>#assessments" class="btn btn-outline dash-course-btn">View course</a>
-                    </li>
+                  <ul class="dash-progress-list dash-courses-list" id="dash-courses-list">
+                    <li style="color:var(--text-muted);font-size:.9rem;padding:16px;">Loading courses...</li>
                   </ul>
                 </div>
               </div>
@@ -173,7 +144,7 @@
           <aside class="dash-aside">
             <div class="dash-card dash-calendar-card">
               <div class="dash-card-head">
-                <span class="dash-calendar-title" id="dash-calendar-month">June 28 Monday</span>
+                <span class="dash-calendar-title" id="dash-calendar-month"></span>
                 <div class="dash-calendar-nav"><button type="button" aria-label="Previous month">‹</button><button type="button" aria-label="Next month">›</button></div>
               </div>
               <div class="dash-card-body">
@@ -243,6 +214,69 @@
           return '<div style="background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); border-radius: 12px; padding: 14px 18px; margin-bottom: 10px;"><strong style="color: #fbbf24;">' + (a.title || '') + '</strong>' + (a.body ? '<p style="margin: 8px 0 0; color: var(--text-muted); font-size: 0.95rem;">' + a.body + '</p>' : '') + '</div>';
         }).join('');
       }).catch(function () {});
+
+      // Student dashboard stats — backend se fetch karo
+      var tok = '';
+      try { tok = localStorage.getItem('apiToken') || ''; } catch(e) {}
+      if (tok) {
+        fetch(base + '/student/dashboard', {
+          headers: { 'Authorization': 'Bearer ' + tok }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          // Stats
+          var el;
+          el = document.getElementById('stat-certs');   if (el) el.textContent = d.certificates_earned || 0;
+          el = document.getElementById('stat-avg');     if (el) el.textContent = (d.avg_score || 0) + '%';
+          el = document.getElementById('stat-passed');  if (el) el.textContent = d.skills_passed || 0;
+          el = document.getElementById('stat-lessons'); if (el) el.textContent = d.lessons_this_week || 0;
+
+          // Recent certificates
+          var certList = document.getElementById('dash-certs-list');
+          if (certList) {
+            if (d.recent_certificates && d.recent_certificates.length > 0) {
+              certList.innerHTML = d.recent_certificates.map(function(c) {
+                var date = c.issued_at ? new Date(c.issued_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
+                return '<li><span class="badge badge-user">' + (c.course_title || 'C').charAt(0).toUpperCase() + '</span><div><strong>' + (c.course_title || 'Certificate') + '</strong><p>Issued ' + date + '</p></div><a href="' + (window.CORSO_API_BASE || '') + '/certificates/download/' + c.certificate_number + '" class="dash-link" target="_blank">View</a></li>';
+              }).join('');
+            } else {
+              certList.innerHTML = '<li style="color:var(--text-muted);font-size:.9rem;">No certificates yet.</li>';
+            }
+          }
+
+          // My courses
+          var courseList = document.getElementById('dash-courses-list');
+          if (courseList) {
+            if (d.courses && d.courses.length > 0) {
+              courseList.innerHTML = d.courses.map(function(c) {
+                var pct = c.progress || 0;
+                var colors = ['rgba(249,115,22,0.2)','rgba(34,197,94,0.2)','rgba(59,130,246,0.2)','rgba(168,85,247,0.2)'];
+                var textColors = ['#fb923c','#4ade80','#60a5fa','#c084fc'];
+                var ci = c.id % 4;
+                return '<li>' +
+                  '<span class="dash-course-icon" style="background:' + colors[ci] + ';color:' + textColors[ci] + ';">📂</span>' +
+                  '<div class="dash-course-info">' +
+                    '<a href="' + (window.CORSO_API_BASE ? window.CORSO_API_BASE.replace('/api','') : '') + '/#assessments" class="dash-course-title">' + c.title + '</a>' +
+                    '<span class="dash-course-meta">By Corso</span>' +
+                    '<div class="dash-course-progress-wrap"><div class="dash-course-progress-bar" style="width:' + pct + '%;"></div></div>' +
+                    '<span class="dash-course-pct">' + pct + '%</span>' +
+                  '</div>' +
+                  '<a href="' + (window.CORSO_API_BASE ? window.CORSO_API_BASE.replace('/api','') : '') + '/#assessments" class="btn btn-outline dash-course-btn">View course</a>' +
+                '</li>';
+              }).join('');
+            } else {
+              courseList.innerHTML = '<li style="color:var(--text-muted);font-size:.9rem;padding:16px;">No courses enrolled yet. <a href="' + (window.CORSO_API_BASE ? window.CORSO_API_BASE.replace('/api','') : '') + '/#assessments">Explore courses</a></li>';
+            }
+          }
+        })
+        .catch(function() {
+          var el;
+          el = document.getElementById('stat-certs');   if (el) el.textContent = '—';
+          el = document.getElementById('stat-avg');     if (el) el.textContent = '—';
+          el = document.getElementById('stat-passed');  if (el) el.textContent = '—';
+          el = document.getElementById('stat-lessons'); if (el) el.textContent = '—';
+        });
+      }
     })();
   </script>
 </body>

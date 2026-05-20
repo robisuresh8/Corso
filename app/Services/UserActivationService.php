@@ -21,48 +21,93 @@ class UserActivationService
             return ['ok' => false, 'error' => 'Email and activation token are required'];
         }
 
-        $userModel = new UserModel();
-        $user = $userModel
+        $userModel    = new UserModel();
+        $visitorModel = new \App\Models\VisitorModel();
+
+        // Pehle visitors table mein dhundo
+        $visitor = $visitorModel
             ->where('email', $email)
-            ->where('activation_token', $activationToken)
+            ->where('cookie_token', $activationToken)
             ->first();
 
-        if (!$user) {
-            // Check if user exists with this email (for debugging)
-            $existingByEmail = $userModel->where('email', $email)->first();
-            if ($existingByEmail) {
-                log_message('debug', 'Activation failed: User found but token mismatch. Email=' . $email . 
-                    ', Provided token=' . substr($activationToken, 0, 16) . '..., 
-                    , DB token=' . (empty($existingByEmail['activation_token']) ? 'NULL/EMPTY' : substr($existingByEmail['activation_token'], 0, 16) . '...') .
-                    ', Status=' . ($existingByEmail['status'] ?? 'unknown'));
-                if (empty($existingByEmail['activation_token'])) {
-                    return ['ok' => false, 'error' => 'Account already activated or token expired. Please log in.'];
-                }
-            } else {
-                log_message('debug', 'Activation failed: No user found with email=' . $email);
-            }
-            return ['ok' => false, 'error' => 'Invalid activation token'];
-        }
-
+        // tempPassword outer scope mein define karo (dono flows ke liye)
         $tempPassword = bin2hex(random_bytes(6));
-        $passwordHash = password_hash($tempPassword, PASSWORD_DEFAULT);
 
-        $db = \Config\Database::connect();
-        $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
+        if (!$visitor) {
+            // Fallback: purana flow — users table mein bhi check karo
+            $user = $userModel
+                ->where('email', $email)
+                ->where('activation_token', $activationToken)
+                ->first();
 
-        $updateRow = [
-            $passwordField => $passwordHash,
-            'status' => 'active',
-            'force_password_change' => 1,
-            'activation_token' => null,
-        ];
-        if ($db->fieldExists('forgot_password_expires_at', 'users')) {
-            $updateRow['forgot_password_expires_at'] = null;
+            if (!$user) {
+                $existingByEmail = $userModel->where('email', $email)->first();
+                if ($existingByEmail) {
+                    log_message('debug', 'Activation failed: token mismatch. Email=' . $email);
+                    if (empty($existingByEmail['activation_token'])) {
+                        return ['ok' => false, 'error' => 'Account already activated or token expired. Please log in.'];
+                    }
+                } else {
+                    log_message('debug', 'Activation failed: No user/visitor found with email=' . $email);
+                }
+                return ['ok' => false, 'error' => 'Invalid activation token'];
+            }
+        } else {
+            // Visitor mila! Users table mein move karo
+            $db            = \Config\Database::connect();
+            $passwordHash  = password_hash($tempPassword, PASSWORD_DEFAULT);
+            $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
+
+            $newUser = [
+                'name'                  => $visitor['name'],
+                'email'                 => $visitor['email'],
+                'phone'                 => $visitor['phone'] ?? null,
+                'role'                  => 'student',
+                'status'                => 'active',
+                'email_verified'        => 1,
+                'activation_token'      => null,
+                'force_password_change' => 1,
+                $passwordField          => $passwordHash,
+            ];
+
+            if (!$db->fieldExists('phone', 'users'))                  unset($newUser['phone']);
+            if (!$db->fieldExists('force_password_change', 'users'))  unset($newUser['force_password_change']);
+
+            // Check karo users mein already hai ya nahi (duplicate protection)
+            $existingUser = $userModel->where('email', $email)->first();
+            if ($existingUser) {
+                $userModel->update($existingUser['id'], array_merge($newUser, ['status' => 'active']));
+                $user = $userModel->find($existingUser['id']);
+            } else {
+                $userId = $userModel->insert($newUser);
+                $user   = $userModel->find($userId);
+            }
+
+            // Visitor ko registered mark karo
+            $visitorModel->update($visitor['id'], ['is_registered' => 1]);
         }
-        if ($db->fieldExists('temp_password_source', 'users')) {
-            $updateRow['temp_password_source'] = 'purchase';
+
+        // Agar visitor se naya user create hua toh password already set hai
+        // Purane users table flow ke liye update karo
+        if (!isset($visitor)) {
+            $db = \Config\Database::connect();
+            $passwordHash  = password_hash($tempPassword, PASSWORD_DEFAULT);
+            $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
+
+            $updateRow = [
+                $passwordField => $passwordHash,
+                'status' => 'active',
+                'force_password_change' => 1,
+                'activation_token' => null,
+            ];
+            if ($db->fieldExists('forgot_password_expires_at', 'users')) {
+                $updateRow['forgot_password_expires_at'] = null;
+            }
+            if ($db->fieldExists('temp_password_source', 'users')) {
+                $updateRow['temp_password_source'] = 'purchase';
+            }
+            $userModel->update($user['id'], $updateRow);
         }
-        $userModel->update($user['id'], $updateRow);
 
         // Main sign-in only (no password in URL). Purchase first-time flow uses user-login + temp password from email.
         $mainLoginUrl = base_url('user-login') . '?email=' . urlencode($email);
@@ -143,6 +188,28 @@ class UserActivationService
                     log_message('info', 'Course found for certificate: ' . $course['title'] . ' (requested: ' . $courseName . ')');
                     $score = (int) ($paymentContext['quiz_score'] ?? 0);
                     $total = (int) ($paymentContext['quiz_total'] ?? 10);
+
+                    // Auto-enroll student in course after payment
+                    try {
+                        $db = \Config\Database::connect();
+                        $alreadyEnrolled = $db->table('enrollments')
+                            ->where('user_id', (int) $user['id'])
+                            ->where('course_id', (int) $course['id'])
+                            ->countAllResults();
+                        if (!$alreadyEnrolled) {
+                            $db->table('enrollments')->insert([
+                                'user_id'          => (int) $user['id'],
+                                'course_id'        => (int) $course['id'],
+                                'enrolled_at'      => date('Y-m-d H:i:s'),
+                                'progress_percent' => 0,
+                                'status'           => 'active',
+                            ]);
+                            log_message('info', 'Auto-enrolled user=' . $user['id'] . ' in course=' . $course['id']);
+                        }
+                    } catch (\Throwable $e) {
+                        log_message('error', 'Auto-enroll failed: ' . $e->getMessage());
+                    }
+
                     $certificate = $certService->generateIfNotExists((int) $user['id'], (int) $course['id'], $score, $total);
                     if ($certificate && is_array($certificate)) {
                         $payload['certificate_id'] = $certificate['id'] ?? null;

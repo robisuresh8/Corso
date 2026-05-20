@@ -46,20 +46,9 @@ class QuizAttemptService
     }
 
     /*
-    | Timer Validation
+    | Timer Validation — skipped (quiz runs on frontend JS, no server session)
     */
-    $startedAt = session()->get('quiz_started_at');
-
-    if (!$startedAt) {
-        throw new \Exception('Quiz session expired.');
-    }
-
-    $allowedTime = $quiz['duration'] * 60;
-    $elapsedTime = time() - strtotime($startedAt);
-
-    if ($elapsedTime > $allowedTime) {
-        throw new \Exception('Time exceeded.');
-    }
+    $startedAt = date('Y-m-d H:i:s');
 
     /*
     | Fetch Questions

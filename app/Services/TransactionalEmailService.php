@@ -10,6 +10,59 @@ use Throwable;
 class TransactionalEmailService
 {
     /**
+     * Welcome email sent after direct registration (api/auth/register).
+     * Includes login credentials and email verification link.
+     *
+     * @return array{sent: bool, error?: string}
+     */
+    public function sendRegistrationWelcome(
+        string $toEmail,
+        string $name,
+        string $plainPassword,
+        string $verifyLink
+    ): array {
+        $safeName = htmlspecialchars($name !== '' ? $name : 'there', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safePass = htmlspecialchars($plainPassword, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeUrl  = htmlspecialchars($verifyLink, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeEmail = htmlspecialchars($toEmail, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        $subject = 'Corso — Your account is ready';
+
+        $plain  = "Hello {$name},\r\n\r\n";
+        $plain .= "Your Corso account has been created successfully.\r\n\r\n";
+        $plain .= "Email:    {$toEmail}\r\n";
+        $plain .= "Password: {$plainPassword}\r\n\r\n";
+        $plain .= "Please verify your email address by clicking the link below:\r\n";
+        $plain .= "{$verifyLink}\r\n\r\n";
+        $plain .= "If you did not create this account, please ignore this email.\r\n\r\n";
+        $plain .= "— Corso E-Learning\r\n";
+
+        $html  = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head>';
+        $html .= '<body style="font-family:system-ui,Segoe UI,sans-serif;line-height:1.6;color:#1a1a1a;max-width:520px;margin:0 auto;padding:24px;">';
+        $html .= '<h2 style="color:#2563eb;margin-bottom:4px;">Welcome to Corso!</h2>';
+        $html .= '<p>Hello ' . $safeName . ',</p>';
+        $html .= '<p>Your account has been created successfully. Here are your login details:</p>';
+        $html .= '<table style="margin:16px 0;border-collapse:collapse;background:#f8fafc;border-radius:8px;padding:12px;width:100%;">';
+        $html .= '<tr><td style="padding:8px 16px 8px 12px;color:#555;width:110px;">Email</td>';
+        $html .= '<td style="padding:8px 0;"><strong>' . $safeEmail . '</strong></td></tr>';
+        $html .= '<tr><td style="padding:8px 16px 8px 12px;color:#555;">Password</td>';
+        $html .= '<td style="padding:8px 0;"><strong>' . $safePass . '</strong></td></tr>';
+        $html .= '</table>';
+        $html .= '<p style="margin:20px 0;">Please verify your email to activate your account:</p>';
+        $html .= '<p style="margin:20px 0;">';
+        $html .= '<a href="' . $safeUrl . '" style="display:inline-block;padding:11px 24px;background:#2563eb;color:#fff;';
+        $html .= 'text-decoration:none;border-radius:8px;font-weight:600;">Verify Email</a>';
+        $html .= '</p>';
+        $html .= '<p style="word-break:break-all;font-size:0.85rem;color:#666;">Or copy this link: <a href="' . $safeUrl . '">' . $safeUrl . '</a></p>';
+        $html .= '<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">';
+        $html .= '<p style="font-size:0.85rem;color:#999;">If you did not create this account, you can safely ignore this email.</p>';
+        $html .= '<p style="font-size:0.85rem;color:#666;">— Corso E-Learning</p>';
+        $html .= '</body></html>';
+
+        return $this->deliver($toEmail, $subject, $html, $plain);
+    }
+
+    /**
      * @return array{sent: bool, error?: string}
      */
     public function sendPaymentSuccess(
@@ -237,6 +290,8 @@ class TransactionalEmailService
 
             return ['sent' => false, 'error' => 'send_exception'];
         }
+
+        log_message('info', 'Transactional email SMTP accepted: from=' . $from . ' to=' . $toEmail);
 
         return ['sent' => true];
     }
