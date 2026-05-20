@@ -6,11 +6,13 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# Install required PHP extensions
+# Install required PHP extensions + SSL support
 RUN apt-get update && apt-get install -y \
     libicu-dev \
     libonig-dev \
     libzip-dev \
+    libssl-dev \
+    ca-certificates \
     zip \
     unzip \
     git \
@@ -53,7 +55,5 @@ RUN echo '<VirtualHost *:80>\n\
 RUN mkdir -p writable/cache writable/logs writable/session writable/uploads \
     && chmod -R 777 writable
 
-# Expose port
 EXPOSE 80
-
 CMD ["apache2-foreground"]
