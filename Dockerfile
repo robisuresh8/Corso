@@ -1,5 +1,8 @@
 FROM php:8.2-apache
 
+# ServerName warning fix
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
@@ -35,6 +38,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Apache config — serve from public/
 RUN echo '<VirtualHost *:80>\n\
+    ServerName localhost\n\
     DocumentRoot /var/www/html/public\n\
     <Directory /var/www/html/public>\n\
         Options Indexes FollowSymLinks\n\
