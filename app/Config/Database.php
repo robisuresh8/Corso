@@ -68,19 +68,19 @@ class Database extends Config
     {
         parent::__construct();
 
-        // Production (Render) — Aiven MySQL SSL
-        if (ENVIRONMENT === 'production') {
-            $this->default['hostname'] = env('database.default.hostname', $this->default['hostname']);
-            $this->default['username'] = env('database.default.username', $this->default['username']);
-            $this->default['password'] = env('database.default.password', $this->default['password']);
-            $this->default['database'] = env('database.default.database', $this->default['database']);
-            $this->default['port']     = (int) env('database.default.port', $this->default['port']);
-            $this->default['DBDriver'] = env('database.default.DBDriver', $this->default['DBDriver']);
-
-            // Aiven SSL — REQUIRED
-            $this->default['encrypt']   = true;
-            $this->default['strictOn']  = false;
-            $this->default['DBDebug']   = false;
+        // Production: Render environment variables (underscore format)
+        $hostname = getenv('DB_HOSTNAME');
+        if ($hostname) {
+            $this->default['hostname'] = $hostname;
+            $this->default['username'] = getenv('DB_USERNAME') ?: $this->default['username'];
+            $this->default['password'] = getenv('DB_PASSWORD') ?: $this->default['password'];
+            $this->default['database'] = getenv('DB_DATABASE') ?: $this->default['database'];
+            $this->default['port']     = (int)(getenv('DB_PORT') ?: $this->default['port']);
+            $this->default['DBDriver'] = getenv('DB_DRIVER') ?: $this->default['DBDriver'];
+            // Aiven SSL required
+            $this->default['encrypt']  = true;
+            $this->default['strictOn'] = false;
+            $this->default['DBDebug']  = false;
         }
 
         if (ENVIRONMENT === 'testing') {
