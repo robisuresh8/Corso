@@ -68,16 +68,18 @@ class Database extends Config
     {
         parent::__construct();
 
-        // Production: Render environment variables (underscore format)
-        $hostname = getenv('DB_HOSTNAME');
+        // Try all possible ways to get env vars (Render, Docker, etc.)
+        $hostname = getenv('DB_HOSTNAME')
+            ?: ($_ENV['DB_HOSTNAME'] ?? null)
+            ?: ($_SERVER['DB_HOSTNAME'] ?? null);
+
         if ($hostname) {
             $this->default['hostname'] = $hostname;
-            $this->default['username'] = getenv('DB_USERNAME') ?: $this->default['username'];
-            $this->default['password'] = getenv('DB_PASSWORD') ?: $this->default['password'];
-            $this->default['database'] = getenv('DB_DATABASE') ?: $this->default['database'];
-            $this->default['port']     = (int)(getenv('DB_PORT') ?: $this->default['port']);
-            $this->default['DBDriver'] = getenv('DB_DRIVER') ?: $this->default['DBDriver'];
-            // Aiven SSL required
+            $this->default['username'] = getenv('DB_USERNAME') ?: ($_ENV['DB_USERNAME'] ?? ($_SERVER['DB_USERNAME'] ?? $this->default['username']));
+            $this->default['password'] = getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? ($_SERVER['DB_PASSWORD'] ?? $this->default['password']));
+            $this->default['database'] = getenv('DB_DATABASE') ?: ($_ENV['DB_DATABASE'] ?? ($_SERVER['DB_DATABASE'] ?? $this->default['database']));
+            $this->default['port']     = (int)(getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? ($_SERVER['DB_PORT'] ?? $this->default['port'])));
+            $this->default['DBDriver'] = getenv('DB_DRIVER') ?: ($_ENV['DB_DRIVER'] ?? ($_SERVER['DB_DRIVER'] ?? $this->default['DBDriver']));
             $this->default['encrypt']  = true;
             $this->default['strictOn'] = false;
             $this->default['DBDebug']  = false;
