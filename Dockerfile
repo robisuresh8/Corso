@@ -3,6 +3,9 @@ FROM php:8.2-apache
 # ServerName warning fix
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
+# Pass environment variables to PHP via Apache
+RUN echo "PassEnv DB_HOSTNAME DB_USERNAME DB_PASSWORD DB_DATABASE DB_PORT DB_DRIVER CI_ENVIRONMENT" >> /etc/apache2/apache2.conf
+
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
