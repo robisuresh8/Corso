@@ -68,18 +68,17 @@ class Database extends Config
     {
         parent::__construct();
 
-        // Try all possible ways to get env vars (Render, Docker, etc.)
-        $hostname = getenv('DB_HOSTNAME')
-            ?: ($_ENV['DB_HOSTNAME'] ?? null)
-            ?: ($_SERVER['DB_HOSTNAME'] ?? null);
+        // Read directly from $_SERVER (Apache PassEnv sets them here)
+        $hostname = $_SERVER['DB_HOSTNAME'] ?? getenv('DB_HOSTNAME') ?: null;
 
         if ($hostname) {
             $this->default['hostname'] = $hostname;
-            $this->default['username'] = getenv('DB_USERNAME') ?: ($_ENV['DB_USERNAME'] ?? ($_SERVER['DB_USERNAME'] ?? $this->default['username']));
-            $this->default['password'] = getenv('DB_PASSWORD') ?: ($_ENV['DB_PASSWORD'] ?? ($_SERVER['DB_PASSWORD'] ?? $this->default['password']));
-            $this->default['database'] = getenv('DB_DATABASE') ?: ($_ENV['DB_DATABASE'] ?? ($_SERVER['DB_DATABASE'] ?? $this->default['database']));
-            $this->default['port']     = (int)(getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? ($_SERVER['DB_PORT'] ?? $this->default['port'])));
-            $this->default['DBDriver'] = getenv('DB_DRIVER') ?: ($_ENV['DB_DRIVER'] ?? ($_SERVER['DB_DRIVER'] ?? $this->default['DBDriver']));
+            $this->default['username'] = $_SERVER['DB_USERNAME'] ?? getenv('DB_USERNAME') ?: $this->default['username'];
+            $this->default['password'] = $_SERVER['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?: $this->default['password'];
+            $this->default['database'] = $_SERVER['DB_DATABASE'] ?? getenv('DB_DATABASE') ?: $this->default['database'];
+            $this->default['port']     = (int)($_SERVER['DB_PORT'] ?? getenv('DB_PORT') ?: $this->default['port']);
+            $this->default['DBDriver'] = $_SERVER['DB_DRIVER'] ?? getenv('DB_DRIVER') ?: $this->default['DBDriver'];
+            // Aiven SSL required
             $this->default['encrypt']  = true;
             $this->default['strictOn'] = false;
             $this->default['DBDebug']  = false;
