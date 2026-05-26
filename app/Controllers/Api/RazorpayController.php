@@ -74,11 +74,15 @@ class RazorpayController extends BaseController
      */
     public function debug()
 {
+    $cfg = config('Razorpay');
     return $this->response->setJSON([
         'keyId_env'     => env('razorpay.keyId'),
         'keySecret_env' => env('razorpay.keySecret') ? 'SET' : 'EMPTY',
-        'keyId_cfg'     => config('Razorpay')->keyId,
+        'config_loaded' => $cfg !== null ? 'YES' : 'NO',
+        'config_class'  => $cfg !== null ? get_class($cfg) : 'NULL',
+        'keyId_cfg'     => $cfg ? $cfg->keyId : 'CONFIG IS NULL',
         'CI_ENV'        => env('CI_ENVIRONMENT'),
+        'php_env'       => getenv('razorpay.keyId'),
     ]);
 }
     public function verify()
