@@ -1,17 +1,9 @@
-<?php
-namespace Config;
-use CodeIgniter\Config\BaseConfig;
-
-class Razorpay extends BaseConfig
+public function debug()
 {
-    public string $keyId = '';
-    public string $keySecret = '';
-    public int $amountPaise = 0000;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->keyId     = (string) (env('razorpay.keyId')     ?? $this->keyId);
-        $this->keySecret = (string) (env('razorpay.keySecret') ?? $this->keySecret);
-    }
+    return $this->response->setJSON([
+        'keyId_env'     => env('razorpay.keyId'),
+        'keySecret_env' => env('razorpay.keySecret') ? 'SET' : 'EMPTY',
+        'keyId_cfg'     => config('Razorpay')->keyId,
+        'CI_ENV'        => env('CI_ENVIRONMENT'),
+    ]);
 }
