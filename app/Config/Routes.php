@@ -64,6 +64,7 @@ $routes->group('api', ['namespace' => 'App\Controllers'], static function ($rout
     $routes->post('quiz-attempts/log', 'Api\QuizAttemptLogController::log', ['filter' => 'jwtauth']);
     $routes->get('quiz/(:num)/questions', 'Api\QuizQuestionsApiController::questions/$1');
 
+    $routes->get('api/payments/razorpay/debug', 'Api\RazorpayController::debug');
     // Certificates API (public verify; list/create require JWT)
     $routes->get('certificates/verify',                 'Certificates::verify');
     $routes->get('certificates/download/(:segment)',    'Certificates::downloadByNumber/$1');
