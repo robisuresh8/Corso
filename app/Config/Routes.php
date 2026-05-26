@@ -64,7 +64,8 @@ $routes->group('api', ['namespace' => 'App\Controllers'], static function ($rout
     $routes->post('quiz-attempts/log', 'Api\QuizAttemptLogController::log', ['filter' => 'jwtauth']);
     $routes->get('quiz/(:num)/questions', 'Api\QuizQuestionsApiController::questions/$1');
 
-    $routes->get('api/payments/razorpay/debug', 'Api\RazorpayController::debug');
+    $routes->get('payments/razorpay/debug', 'Api\RazorpayController::debug');
+
     // Certificates API (public verify; list/create require JWT)
     $routes->get('certificates/verify',                 'Certificates::verify');
     $routes->get('certificates/download/(:segment)',    'Certificates::downloadByNumber/$1');
@@ -114,7 +115,6 @@ $routes->group('api/admin', ['filter' => 'adminauth', 'namespace' => 'App\Contro
     $routes->delete('questions/(:num)',                'Admin::questionDelete/$1');
     $routes->get('reports/analytics',                  'Admin::reportsAnalytics');
     $routes->post('reset-user-password', '\App\Controllers\Auth\AuthController::adminResetUserPassword');
-    // Student permission management (admin can manage student permissions)
     $routes->get('permissions/students',               'SuperAdmin\PermissionController::studentPermissionsList');
     $routes->get('permissions/student/(:num)',         'SuperAdmin\PermissionController::getStudentPermissions/$1');
     $routes->put('permissions/student/(:num)',         'SuperAdmin\PermissionController::updateStudentPermissions/$1');
@@ -124,39 +124,33 @@ $routes->group('api/admin', ['filter' => 'adminauth', 'namespace' => 'App\Contro
 // ADMIN ROUTES
 // -----------------------------
 $routes->group('admin', ['filter' => 'adminauth'], function($routes) {
-    // Dashboard
     $routes->get('dashboard',           'Admin\Dashboard::index');
     $routes->get('dashboard/analytics', 'Admin\Dashboard::analytics');
 
-    // Categories
     $routes->get('categories',             'Admin\CategoryController::index');
     $routes->get('categories/(:num)/edit', 'Admin\CategoryController::edit/$1');
     $routes->post('categories',            'Admin\CategoryController::store');
     $routes->put('categories/(:num)',      'Admin\CategoryController::update/$1');
     $routes->delete('categories/(:num)',   'Admin\CategoryController::delete/$1');
 
-    // Courses
     $routes->get('courses',             'Admin\CourseController::index');
     $routes->get('courses/(:num)/edit', 'Admin\CourseController::edit/$1');
     $routes->post('courses',            'Admin\CourseController::store');
     $routes->put('courses/(:num)',       'Admin\CourseController::update/$1');
     $routes->delete('courses/(:num)',    'Admin\CourseController::delete/$1');
 
-    // Quizzes
     $routes->get('quizzes',             'Admin\QuizController::index');
     $routes->get('quizzes/(:num)/edit', 'Admin\QuizController::edit/$1');
     $routes->post('quizzes',            'Admin\QuizController::store');
     $routes->put('quizzes/(:num)',       'Admin\QuizController::update/$1');
     $routes->delete('quizzes/(:num)',    'Admin\QuizController::delete/$1');
 
-    // Questions
     $routes->get('courses/(:num)/questions',  'Admin\QuestionController::index/$1');
     $routes->get('questions/(:num)/edit',     'Admin\QuestionController::edit/$1');
     $routes->post('courses/(:num)/questions', 'Admin\QuestionController::store/$1');
     $routes->put('questions/(:num)',           'Admin\QuestionController::update/$1');
     $routes->delete('questions/(:num)',        'Admin\QuestionController::delete/$1');
 
-    // Certificates
     $routes->get('certificates', 'Admin\CertificateController::index');
 });
 
@@ -180,7 +174,6 @@ $routes->group('api/super-admin', [
     $routes->put('announcements/(:num)',  'AnnouncementsController::update/$1');
     $routes->delete('announcements/(:num)', 'AnnouncementsController::delete/$1');
 
-    // Permission management (superadmin manages admin permissions)
     $routes->get('permissions',                'PermissionController::index');
     $routes->get('permissions/admins',         'PermissionController::adminPermissionsList');
     $routes->get('permissions/user/(:num)',    'PermissionController::getUserPermissions/$1');
