@@ -85,27 +85,19 @@ class RazorpayController extends BaseController
 
 public function emailTest()
 {
-    try {
-        $email = \Config\Services::email();
+    $host = getenv('EMAIL_SMTP_HOST');
+    $port = (int) getenv('EMAIL_SMTP_PORT');
 
-        $email->setTo('robisuresh0112@gmail.com');
-        $email->setSubject('SMTP Test');
-        $email->setMessage('SMTP working');
+    $fp = @fsockopen($host, $port, $errno, $errstr, 15);
 
-        $result = $email->send();
-
-        return $this->response->setJSON([
-            'sent' => $result,
-            'debug' => $email->printDebugger()
-        ]);
-    } catch (\Throwable $e) {
-        log_message('error', 'EMAIL TEST ERROR: ' . $e->getMessage());
-
-        return $this->response->setJSON([
-            'error' => $e->getMessage(),
-            'trace' => $e->getFile() . ':' . $e->getLine()
-        ]);
-    }
+    return $this->response->setJSON([
+        'host' => $host,
+        'port' => $port,
+        'connected' => $fp ? true : false,
+        'errno' => $errno ?? null,
+        'errstr' => $errstr ?? null,
+        'openssl' => extension_loaded('openssl'),
+    ]);
 }
 
 public function verify()
