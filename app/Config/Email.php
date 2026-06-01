@@ -33,16 +33,16 @@ class Email extends BaseConfig
     public bool   $DSN        = false;
 
     public function __construct()
-    {
-        parent::__construct();
+{
+    parent::__construct();
 
-        $this->fromEmail  = (string) (env('email.fromEmail')  ?: $this->fromEmail);
-        $this->fromName   = (string) (env('email.fromName')   ?: $this->fromName);
-        $this->protocol   = (string) (env('email.protocol')   ?: $this->protocol);
-        $this->SMTPHost   = (string) (env('email.SMTPHost')   ?: $this->SMTPHost);
-        $this->SMTPUser   = (string) (env('email.SMTPUser')   ?: $this->SMTPUser);
-        $this->SMTPPass   = (string) (env('email.SMTPPass')   ?: $this->SMTPPass);
-        $this->SMTPCrypto = (string) (env('email.SMTPCrypto') ?: $this->SMTPCrypto);
-        $this->SMTPPort   = (int)    (env('email.SMTPPort')   ?: $this->SMTPPort);
-    }
+    $this->fromEmail  = 'robisuresh3@gmail.com';
+    $this->fromName   = 'Corso E-Learning';
+    $this->protocol   = 'smtp';
+    $this->SMTPHost   = 'smtp-relay.brevo.com';
+    $this->SMTPUser   = 'a73dd7001asmtp-brevo.com';
+    $this->SMTPPass   = 'xsmtpsib-7e10907e6b8eac0848bee225dbcaae99c1bd2c3bcf7f7f65e5debe94e1fe4927-dNdP9HhlVoyoth6h';
+    $this->SMTPCrypto = 'tls';
+    $this->SMTPPort   = 587;
+}
 }
