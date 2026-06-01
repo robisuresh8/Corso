@@ -85,19 +85,28 @@ class RazorpayController extends BaseController
 
 public function emailTest()
 {
+    $cfg = config('Email');
+
     $email = \Config\Services::email();
 
     $email->setTo('robisuresh0112@gmail.com');
     $email->setSubject('SMTP Test');
-    $email->setMessage('SMTP working');
+    $email->setMessage('SMTP working from Render');
 
-    if ($email->send()) {
-        return $this->response->setJSON(['status' => 'success']);
-    }
+    $sent = $email->send(false);
 
     return $this->response->setJSON([
-        'status' => 'failed',
-        'debug'  => $email->printDebugger(['headers'])
+        'sent'   => $sent,
+        'config' => [
+            'from'   => $cfg->fromEmail,
+            'host'   => $cfg->SMTPHost,
+            'user'   => $cfg->SMTPUser,
+            'pass'   => $cfg->SMTPPass ? 'FOUND' : 'MISSING',
+            'port'   => $cfg->SMTPPort,
+            'crypto' => $cfg->SMTPCrypto,
+            'protocol' => $cfg->protocol,
+        ],
+        'debug' => $email->printDebugger(['headers', 'subject']),
     ]);
 }
 
