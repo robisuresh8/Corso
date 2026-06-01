@@ -85,9 +85,12 @@ class RazorpayController extends BaseController
 
 public function emailTest()
 {
-    $cfg = config('Email');
-
     $email = \Config\Services::email();
+
+    $email->setFrom(
+        config('Email')->fromEmail,
+        config('Email')->fromName
+    );
 
     $email->setTo('robisuresh0112@gmail.com');
     $email->setSubject('SMTP Test');
@@ -96,17 +99,8 @@ public function emailTest()
     $sent = $email->send(false);
 
     return $this->response->setJSON([
-        'sent'   => $sent,
-        'config' => [
-            'from'   => $cfg->fromEmail,
-            'host'   => $cfg->SMTPHost,
-            'user'   => $cfg->SMTPUser,
-            'pass'   => $cfg->SMTPPass ? 'FOUND' : 'MISSING',
-            'port'   => $cfg->SMTPPort,
-            'crypto' => $cfg->SMTPCrypto,
-            'protocol' => $cfg->protocol,
-        ],
-        'debug' => $email->printDebugger(['headers', 'subject']),
+        'sent' => $sent,
+        'error' => $email->printDebugger()
     ]);
 }
 
