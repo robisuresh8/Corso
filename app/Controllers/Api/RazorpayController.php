@@ -87,20 +87,24 @@ public function emailTest()
 {
     $email = \Config\Services::email();
 
-    $email->setFrom(
-        config('Email')->fromEmail,
-        config('Email')->fromName
-    );
-
     $email->setTo('robisuresh0112@gmail.com');
     $email->setSubject('SMTP Test');
-    $email->setMessage('SMTP working from Render');
+    $email->setMessage('SMTP working');
 
     $sent = $email->send(false);
 
     return $this->response->setJSON([
         'sent' => $sent,
-        'error' => $email->printDebugger()
+        'config' => [
+            'host' => config('Email')->SMTPHost,
+            'port' => config('Email')->SMTPPort,
+            'user' => config('Email')->SMTPUser,
+            'crypto' => config('Email')->SMTPCrypto,
+        ],
+        'openssl' => extension_loaded('openssl'),
+        'fsockopen' => function_exists('fsockopen'),
+        'stream_socket_client' => function_exists('stream_socket_client'),
+        'debug' => $email->printDebugger(),
     ]);
 }
 

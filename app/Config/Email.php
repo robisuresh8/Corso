@@ -22,7 +22,7 @@ class Email extends BaseConfig
     public string $SMTPCrypto = 'tls';
     public bool   $wordWrap   = true;
     public int    $wrapChars  = 76;
-    public string $mailType   = 'text';
+    public string $mailType   = 'html';
     public string $charset    = 'UTF-8';
     public bool   $validate   = false;
     public int    $priority   = 3;
@@ -44,5 +44,6 @@ class Email extends BaseConfig
     $this->SMTPPass   = getenv('EMAIL_SMTP_PASS') ?: $this->SMTPPass;
     $this->SMTPCrypto = getenv('EMAIL_SMTP_CRYPTO') ?: $this->SMTPCrypto;
     $this->SMTPPort   = getenv('EMAIL_SMTP_PORT') ?: $this->SMTPPort;
+    $this->SMTPTimeout = (int) (getenv('EMAIL_SMTP_TIMEOUT') ?: 15);
 }
 }
