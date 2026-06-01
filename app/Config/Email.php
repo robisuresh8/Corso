@@ -36,13 +36,13 @@ class Email extends BaseConfig
 {
     parent::__construct();
 
-    $this->fromEmail  = 'robisuresh3@gmail.com';
-    $this->fromName   = 'Corso E-Learning';
-    $this->protocol   = 'smtp';
-    $this->SMTPHost   = 'smtp-relay.brevo.com';
-    $this->SMTPUser   = 'a73dd7001asmtp-brevo.com';
-    $this->SMTPPass   = 'xsmtpsib-7e10907e6b8eac0848bee225dbcaae99c1bd2c3bcf7f7f65e5debe94e1fe4927-dNdP9HhlVoyoth6h';
-    $this->SMTPCrypto = 'tls';
-    $this->SMTPPort   = 587;
+    $this->fromEmail = getenv('EMAIL_FROM_EMAIL') ?: $this->fromEmail;
+    $this->fromName  = getenv('EMAIL_FROM_NAME') ?: $this->fromName;
+    $this->protocol   = getenv('EMAIL_PROTOCOL') ?: $this->protocol;
+    $this->SMTPHost   = getenv('EMAIL_SMTP_HOST') ?: $this->SMTPHost;
+    $this->SMTPUser   = getenv('EMAIL_SMTP_USER') ?: $this->SMTPUser;
+    $this->SMTPPass   = getenv('EMAIL_SMTP_PASS') ?: $this->SMTPPass;
+    $this->SMTPCrypto = getenv('EMAIL_SMTP_CRYPTO') ?: $this->SMTPCrypto;
+    $this->SMTPPort   = getenv('EMAIL_SMTP_PORT') ?: $this->SMTPPort;
 }
 }
