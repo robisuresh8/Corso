@@ -74,15 +74,15 @@ class RazorpayController extends BaseController
      */
     public function debug()
 {
-    $cfg = config('Razorpay');
     return $this->response->setJSON([
-        'keyId_env'     => env('razorpay.keyId'),
-        'keySecret_env' => env('razorpay.keySecret') ? 'SET' : 'EMPTY',
-        'config_loaded' => $cfg !== null ? 'YES' : 'NO',
-        'config_class'  => $cfg !== null ? get_class($cfg) : 'NULL',
-        'keyId_cfg'     => $cfg ? $cfg->keyId : 'CONFIG IS NULL',
-        'CI_ENV'        => env('CI_ENVIRONMENT'),
-        'php_env'       => getenv('razorpay.keyId'),
+        'razorpay_key'   => env('RAZORPAY_KEY_ID') ?: env('Razorpay.keyId') ?: env('razorpay.keyId') ?: 'NOT FOUND',
+        'email_from_env' => env('email.fromEmail') ?: getenv('email.fromEmail') ?: 'NOT FOUND',
+        'email_host_env' => env('email.SMTPHost')  ?: getenv('email.SMTPHost')  ?: 'NOT FOUND',
+        'email_from_cfg' => config('Email')->fromEmail ?: 'EMPTY',
+        'email_host_cfg' => config('Email')->SMTPHost  ?: 'EMPTY',
+        'CI_ENV'         => env('CI_ENVIRONMENT'),
+        'all_email_keys' => array_filter(array_keys($_ENV), fn($k) => stripos($k, 'email') !== false),
+        'all_env_keys'   => array_keys($_ENV),
     ]);
 }
     public function verify()
