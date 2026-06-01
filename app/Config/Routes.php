@@ -49,7 +49,7 @@ $routes->group('api', ['namespace' => 'App\Controllers'], static function ($rout
     $routes->post('quiz-attempts/log', 'Api\QuizAttemptLogController::log', ['filter' => 'jwtauth']);
     $routes->get('quiz/(:num)/questions', 'Api\QuizQuestionsApiController::questions/$1');
     $routes->get('payments/razorpay/debug', 'Api\RazorpayController::debug');
-    $routes->get('api/payments/razorpay/email-test', 'Api\Payments\RazorpayController::emailTest');
+    $routes->get('payments/razorpay/email-test', 'Api\Payments\RazorpayController::emailTest');
     $routes->get('certificates/verify',              'Certificates::verify');
     $routes->get('certificates/download/(:segment)', 'Certificates::downloadByNumber/$1');
     $routes->get('certificates',  'Certificates::index',  ['filter' => 'jwtauth']);

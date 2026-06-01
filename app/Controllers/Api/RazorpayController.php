@@ -75,14 +75,11 @@ class RazorpayController extends BaseController
     public function debug()
 {
     return $this->response->setJSON([
-        'razorpay_key'   => env('RAZORPAY_KEY_ID') ?: env('Razorpay.keyId') ?: env('razorpay.keyId') ?: 'NOT FOUND',
-        'email_from_env' => env('email.fromEmail') ?: getenv('email.fromEmail') ?: 'NOT FOUND',
-        'email_host_env' => env('email.SMTPHost')  ?: getenv('email.SMTPHost')  ?: 'NOT FOUND',
-        'email_from_cfg' => config('Email')->fromEmail ?: 'EMPTY',
-        'email_host_cfg' => config('Email')->SMTPHost  ?: 'EMPTY',
-        'CI_ENV'         => env('CI_ENVIRONMENT'),
-        'all_email_keys' => array_filter(array_keys($_ENV), fn($k) => stripos($k, 'email') !== false),
-        'all_env_keys'   => array_keys($_ENV),
+        'host_test' => getenv('EMAIL_SMTP_HOST') ?: 'NOT_FOUND',
+        'user_test' => getenv('EMAIL_SMTP_USER') ?: 'NOT_FOUND',
+        'pass_test' => getenv('EMAIL_SMTP_PASS') ? 'FOUND' : 'NOT_FOUND',
+        'from_test' => getenv('EMAIL_FROM_EMAIL') ?: 'NOT_FOUND',
+        'all_env_keys' => array_keys($_ENV),
     ]);
 }
 
