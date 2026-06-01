@@ -72,6 +72,19 @@ class RazorpayController extends BaseController
      * POST /api/payments/razorpay/verify
      * Verifies payment signature and activates the user account.
      */
+    public function debug()
+{
+    $cfg = config('Razorpay');
+    return $this->response->setJSON([
+        'keyId_env'     => env('razorpay.keyId'),
+        'keySecret_env' => env('razorpay.keySecret') ? 'SET' : 'EMPTY',
+        'config_loaded' => $cfg !== null ? 'YES' : 'NO',
+        'config_class'  => $cfg !== null ? get_class($cfg) : 'NULL',
+        'keyId_cfg'     => $cfg ? $cfg->keyId : 'CONFIG IS NULL',
+        'CI_ENV'        => env('CI_ENVIRONMENT'),
+        'php_env'       => getenv('razorpay.keyId'),
+    ]);
+}
     public function verify()
     {
         /** @var Razorpay $cfg */

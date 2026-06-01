@@ -236,6 +236,7 @@ class AuthController extends BaseController
             return $this->response->setStatusCode(400)->setJSON(['error' => 'Invalid email format']);
         }
 
+<<<<<<< HEAD
         $userModel = new UserModel();
         $db        = \Config\Database::connect();
 
@@ -283,6 +284,42 @@ class AuthController extends BaseController
                 $insertData['force_password_change'] = 1;
             }
             $userModel->insert($insertData);
+=======
+        $userModel    = new UserModel();
+        $visitorModel = new \App\Models\VisitorModel();
+
+        // Active user wapas register kare toh uska account inactive mat karo
+        $activeUser = $userModel->where('email', $email)->where('status', 'active')->first();
+        if ($activeUser) {
+            return $this->response->setStatusCode(400)->setJSON([
+                'error' => 'An active account already exists with this email. Please log in.'
+            ]);
+        }
+
+        $activationToken = bin2hex(random_bytes(32));
+
+        // Visitors table mein check karo — existing visitor ho toh token reuse karo
+        $existingVisitor = $visitorModel->where('email', $email)->first();
+        if ($existingVisitor && !empty($existingVisitor['cookie_token'])) {
+            $activationToken = $existingVisitor['cookie_token'];
+            $visitorModel->update($existingVisitor['id'], [
+                'name'          => $name,
+                'phone'         => $phone !== '' ? $phone : null,
+                'is_registered' => 0,
+                'last_active'   => date('Y-m-d H:i:s'),
+                'expires_at'    => date('Y-m-d H:i:s', strtotime('+7 days')),
+            ]);
+        } else {
+            $visitorModel->insert([
+                'name'          => $name,
+                'email'         => $email,
+                'phone'         => $phone !== '' ? $phone : null,
+                'cookie_token'  => $activationToken,
+                'is_registered' => 0,
+                'last_active'   => date('Y-m-d H:i:s'),
+                'expires_at'    => date('Y-m-d H:i:s', strtotime('+7 days')),
+            ]);
+>>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
         }
 
         return $this->response->setJSON([
@@ -509,8 +546,15 @@ class AuthController extends BaseController
         return $this->response->setJSON($generic);
     }
 
+<<<<<<< HEAD
     /**
      * POST /api/admin/reset-user-password
+=======
+
+    /**
+     * Admin can reset any user password.
+     * POST /api/admin/reset-user-password  { "user_id": 5, "new_password": "..." }
+>>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
      */
     public function adminResetUserPassword()
     {
@@ -519,15 +563,25 @@ class AuthController extends BaseController
         $newPass  = (string) ($data['new_password'] ?? '');
 
         if (!$targetId || strlen($newPass) < 6) {
+<<<<<<< HEAD
             return $this->response->setStatusCode(400)->setJSON(['error' => 'user_id and new_password (min 6 chars) are required']);
         }
 
         $userModel = new UserModel();
         $user      = $userModel->find($targetId);
+=======
+            return $this->response->setStatusCode(400)
+                ->setJSON(['error' => 'user_id and new_password (min 6 chars) are required']);
+        }
+
+        $userModel = new UserModel();
+        $user = $userModel->find($targetId);
+>>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
         if (!$user) {
             return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
         }
 
+<<<<<<< HEAD
         $db            = \Config\Database::connect();
         $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
 
@@ -539,4 +593,24 @@ class AuthController extends BaseController
 
         return $this->response->setJSON(['ok' => true, 'message' => 'Password reset successfully']);
     }
+=======
+        $db = \Config\Database::connect();
+        $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
+
+        $updates = [
+            $passwordField          => password_hash($newPass, PASSWORD_DEFAULT),
+            'force_password_change' => 1,
+        ];
+        if ($db->fieldExists('temp_password_source', 'users')) {
+            $updates['temp_password_source'] = 'admin_reset';
+        }
+        if ($db->fieldExists('forgot_password_expires_at', 'users')) {
+            $updates['forgot_password_expires_at'] = null;
+        }
+
+        $userModel->update($targetId, $updates);
+        return $this->response->setJSON(['ok' => true, 'message' => 'Password reset successfully']);
+    }
+
+>>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
 }
