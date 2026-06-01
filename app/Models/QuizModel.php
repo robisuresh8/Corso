@@ -19,7 +19,7 @@ class QuizModel extends Model
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
-    protected $deletedField  = 'deleted_at';
+    // Note: quizzes table mein deleted_at column nahi hai DB mein
     protected $useSoftDeletes = false;
 
     protected $beforeInsert = ['generateSlug'];

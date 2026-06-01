@@ -36,8 +36,10 @@ class AdminAuth implements FilterInterface
                     ->setStatusCode(403);
             }
 
-            // 5️⃣ Store in session for use in controllers
+            // Store in session for use in controllers
             session()->set('auth_user', $decoded);
+            // request->user_id bhi set karo (controllers ke liye)
+            $request->user_id = (int) ($decoded->uid ?? 0);
 
         } catch (\Exception $e) {
             return service('response')

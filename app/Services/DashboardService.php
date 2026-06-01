@@ -52,11 +52,21 @@ class DashboardService
     }
 
     // ✅ Fixed: status is enum string not 0/1
+    // visitors table (pre-registered, not yet paid) bhi count karo
     private function getInactiveUsers(): int
     {
-        return $this->db->table('users')
+        $usersInactive = $this->db->table('users')
             ->where('status', 'inactive')
             ->countAllResults();
+
+        $visitorsCount = 0;
+        try {
+            $visitorsCount = $this->db->table('visitors')
+                ->where('is_registered', 0)
+                ->countAllResults();
+        } catch (\Exception $e) {}
+
+        return $usersInactive + $visitorsCount;
     }
 
     // ✅ Get users by role

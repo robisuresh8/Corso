@@ -15,14 +15,28 @@ class CertificateController extends BaseController
 
     public function index()
     {
-        $userId = session()->get('user_id');
+        $userId = $this->getJwtUserId();
+        if (!$userId) {
+            return $this->response->setStatusCode(401)->setJSON(['error' => 'Unauthorized']);
+        }
 
-        $certificates = $this->certificateService
-            ->getCertificatesByUser($userId);
+        $certificates = $this->certificateService->getCertificatesByUser($userId);
+        return view('my_certificates', ['certificates' => $certificates]);
+    }
 
-        return view('student/certificates/index', [
-            'certificates' => $certificates
-        ]);
+    private function getJwtUserId(): ?int
+    {
+        try {
+            // JWT filter se set hota hai
+            if (!empty($this->request->user_id)) return (int) $this->request->user_id;
+            $header = $this->request->getHeaderLine('Authorization');
+            $token  = str_replace('Bearer ', '', $header);
+            if (!$token) return null;
+            $parts  = explode('.', $token);
+            if (count($parts) !== 3) return null;
+            $payload = json_decode(base64_decode(str_replace(['-','_'],['+','/'],$parts[1])), true);
+            return isset($payload['uid']) ? (int) $payload['uid'] : null;
+        } catch (\Throwable $e) { return null; }
     }
 
     public function download($id)

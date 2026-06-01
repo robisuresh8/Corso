@@ -152,7 +152,7 @@
             <div class="course-card-body">
               <h3>Data Science Fundamentals</h3>
               <p>Core concepts, tooling, and data handling.</p>
-              <button type="button" class="btn btn-primary course-test-btn" data-course="Data Science Fundamentals">Start →</button>
+              <button type="button" class="btn btn-primary course-test-btn" data-course="Data Science Fundamentals" data-quiz-id="1">Start →</button>
             </div>
           </article>
           <article class="course-card" data-category="Programming">
@@ -161,7 +161,7 @@
             <div class="course-card-body">
               <h3>Java Basics</h3>
               <p>Syntax, OOP fundamentals, and debugging.</p>
-              <button type="button" class="btn btn-primary course-test-btn" data-course="Java Basics">Start →</button>
+              <button type="button" class="btn btn-primary course-test-btn" data-course="Java Basics" data-quiz-id="2">Start →</button>
             </div>
           </article>
           <article class="course-card" data-category="Marketing">
@@ -170,7 +170,7 @@
             <div class="course-card-body">
               <h3>Digital Marketing</h3>
               <p>SEO, content strategy, and analytics.</p>
-              <button type="button" class="btn btn-primary course-test-btn" data-course="Digital Marketing">Start →</button>
+              <button type="button" class="btn btn-primary course-test-btn" data-course="Digital Marketing" data-quiz-id="3">Start →</button>
             </div>
           </article>
           <article class="course-card" data-category="Data &amp; Analytics">
@@ -179,7 +179,7 @@
             <div class="course-card-body">
               <h3>Excel for Analysis</h3>
               <p>Formulas, pivot tables, and best practices.</p>
-              <button type="button" class="btn btn-primary course-test-btn" data-course="Excel for Analysis">Start →</button>
+              <button type="button" class="btn btn-primary course-test-btn" data-course="Excel for Analysis" data-quiz-id="4">Start →</button>
             </div>
           </article>
           <article class="course-card" data-category="Programming">
@@ -188,7 +188,7 @@
             <div class="course-card-body">
               <h3>Python Basics</h3>
               <p>Syntax, data structures &amp; practical scripting.</p>
-              <button type="button" class="btn btn-primary course-test-btn" data-course="Python Basics">Start →</button>
+              <button type="button" class="btn btn-primary course-test-btn" data-course="Python Basics" data-quiz-id="5">Start →</button>
             </div>
           </article>
           <article class="course-card" data-category="Data &amp; Analytics">
@@ -197,7 +197,7 @@
             <div class="course-card-body">
               <h3>SQL Essentials</h3>
               <p>SELECT, WHERE, joins &amp; data best practices.</p>
-              <button type="button" class="btn btn-primary course-test-btn" data-course="SQL Essentials">Start →</button>
+              <button type="button" class="btn btn-primary course-test-btn" data-course="SQL Essentials" data-quiz-id="6">Start →</button>
             </div>
           </article>
         </div>
