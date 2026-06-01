@@ -21,55 +21,15 @@ class UserActivationService
             return ['ok' => false, 'error' => 'Email and activation token are required'];
         }
 
-<<<<<<< HEAD
-        $userModel = new UserModel();
-
-        // Users table mein dhundo by email + activation_token
-        $user = $userModel
-=======
         $userModel    = new UserModel();
         $visitorModel = new \App\Models\VisitorModel();
 
         // Pehle visitors table mein dhundo
         $visitor = $visitorModel
->>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
             ->where('email', $email)
             ->where('cookie_token', $activationToken)
             ->first();
 
-<<<<<<< HEAD
-        if (!$user) {
-            $existingByEmail = $userModel->where('email', $email)->first();
-            if ($existingByEmail) {
-                if (empty($existingByEmail['activation_token'])) {
-                    return ['ok' => false, 'error' => 'Account already activated. Please log in.'];
-                }
-                log_message('debug', 'Activation token mismatch. email=' . $email .
-                    ' db_token=' . $existingByEmail['activation_token'] .
-                    ' provided_token=' . $activationToken);
-            } else {
-                log_message('debug', 'Activation failed: no user found for email=' . $email);
-            }
-            return ['ok' => false, 'error' => 'Invalid Token'];
-        }
-
-        // Already active check
-        if (($user['status'] ?? '') === 'active') {
-            return ['ok' => false, 'error' => 'Account already activated. Please log in.'];
-        }
-
-        // Temp password generate karo
-        $tempPassword  = bin2hex(random_bytes(6));
-        $db            = \Config\Database::connect();
-        $passwordField = $db->fieldExists('password_hash', 'users') ? 'password_hash' : 'password';
-
-        $updateData = [
-            'status'           => 'active',
-            'activation_token' => null,
-            'email_verified'   => 1,
-            $passwordField     => password_hash($tempPassword, PASSWORD_DEFAULT),
-        ];
-=======
         // tempPassword outer scope mein define karo (dono flows ke liye)
         $tempPassword = bin2hex(random_bytes(6));
 
@@ -148,7 +108,6 @@ class UserActivationService
             }
             $userModel->update($user['id'], $updateRow);
         }
->>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
 
         if ($db->fieldExists('force_password_change', 'users'))      $updateData['force_password_change']      = 1;
         if ($db->fieldExists('temp_password_source', 'users'))        $updateData['temp_password_source']       = 'purchase';
@@ -228,26 +187,6 @@ class UserActivationService
                 }
 
                 if ($course) {
-<<<<<<< HEAD
-                    // Auto-enroll
-                    $alreadyEnrolled = $db->table('enrollments')
-                        ->where('user_id', (int) $user['id'])
-                        ->where('course_id', (int) $course['id'])
-                        ->countAllResults();
-
-                    if (!$alreadyEnrolled) {
-                        $db->table('enrollments')->insert([
-                            'user_id'          => (int) $user['id'],
-                            'course_id'        => (int) $course['id'],
-                            'enrolled_at'      => date('Y-m-d H:i:s'),
-                            'progress_percent' => 0,
-                            'status'           => 'active',
-                        ]);
-                    }
-
-                    $score       = (int) ($paymentContext['quiz_score'] ?? 0);
-                    $total       = (int) ($paymentContext['quiz_total'] ?? 10);
-=======
                     log_message('info', 'Course found for certificate: ' . $course['title'] . ' (requested: ' . $courseName . ')');
                     $score = (int) ($paymentContext['quiz_score'] ?? 0);
                     $total = (int) ($paymentContext['quiz_total'] ?? 10);
@@ -273,7 +212,6 @@ class UserActivationService
                         log_message('error', 'Auto-enroll failed: ' . $e->getMessage());
                     }
 
->>>>>>> 185abceb9e75be1c2dac2c9386d394869a28b162
                     $certificate = $certService->generateIfNotExists((int) $user['id'], (int) $course['id'], $score, $total);
 
                     if ($certificate && is_array($certificate)) {
