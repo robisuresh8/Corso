@@ -85,7 +85,26 @@ class RazorpayController extends BaseController
         'all_env_keys'   => array_keys($_ENV),
     ]);
 }
-    public function verify()
+
+public function emailTest()
+{
+    $email = \Config\Services::email();
+
+    $email->setTo('robisuresh0112@gmail.com');
+    $email->setSubject('SMTP Test');
+    $email->setMessage('SMTP working');
+
+    if ($email->send()) {
+        return $this->response->setJSON(['status' => 'success']);
+    }
+
+    return $this->response->setJSON([
+        'status' => 'failed',
+        'debug'  => $email->printDebugger(['headers'])
+    ]);
+}
+
+public function verify()
     {
         /** @var Razorpay $cfg */
         $cfg = config('Razorpay');
