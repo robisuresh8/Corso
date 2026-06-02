@@ -164,11 +164,15 @@ public function verify()
             }
 
             return $this->response->setJSON($result['payload']);
-        } catch (\Throwable $e) {
+        }  catch (\Throwable $e) {
             log_message('error', 'Razorpay verify exception: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
             return $this->response
                 ->setStatusCode(500)
-                ->setJSON(['error' => 'Internal error during activation. Please contact support.', 'debug' => $e->getMessage()]);
+                ->setJSON([
+                    'error' => 'Internal error during activation. Please contact support.',
+                    'debug' => $e->getMessage(),  // ye already hai
+                    'trace' => substr($e->getTraceAsString(), 0, 500)  // ← ye add karo
+                ]);
         }
     }
 
