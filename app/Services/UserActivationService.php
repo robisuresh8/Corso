@@ -139,6 +139,10 @@ class UserActivationService
 
         // Activation credentials email
         $mailResult = $this->sendActivationCredentialsEmail($email, $tempPassword, $mainLoginUrl, $normalLoginUrl);
+
+        // Activation credentials email — Brevo API ke through
+        $txnMail   = new TransactionalEmailService();
+        $mailResult = $txnMail->sendActivationCredentials($email, $tempPassword, $mainLoginUrl, $normalLoginUrl);
         $emailSent  = $mailResult['sent'];
 
         $payload = [
@@ -161,16 +165,9 @@ class UserActivationService
                 $courseName  = $paymentContext['course_name'];
 
                 $course = $courseModel->where('title', $courseName)->first();
-
-                if (!$course) {
-                    $course = $courseModel->where('LOWER(title)', strtolower($courseName))->first();
-                }
-                if (!$course) {
-                    $course = $courseModel->like('title', trim($courseName), 'both')->first();
-                }
-                if (!$course && !empty($paymentContext['course_id'])) {
-                    $course = $courseModel->find((int) $paymentContext['course_id']);
-                }
+                if (!$course) $course = $courseModel->where('LOWER(title)', strtolower($courseName))->first();
+                if (!$course) $course = $courseModel->like('title', trim($courseName), 'both')->first();
+                if (!$course && !empty($paymentContext['course_id'])) $course = $courseModel->find((int) $paymentContext['course_id']);
                 if (!$course && strlen($courseName) > 3) {
                     foreach (array_filter(explode(' ', $courseName)) as $word) {
                         if (strlen($word) > 3) {
@@ -181,37 +178,28 @@ class UserActivationService
                 }
                 if (!$course) {
                     $allCourses = $courseModel->where('status', 'published')->findAll();
-                    if (count($allCourses) === 1) {
-                        $course = $allCourses[0];
-                    }
+                    if (count($allCourses) === 1) $course = $allCourses[0];
                 }
 
                 if ($course) {
-                    log_message('info', 'Course found for certificate: ' . $course['title'] . ' (requested: ' . $courseName . ')');
-                    $score = (int) ($paymentContext['quiz_score'] ?? 0);
-                    $total = (int) ($paymentContext['quiz_total'] ?? 10);
+                    $db = \Config\Database::connect();
+                    $alreadyEnrolled = $db->table('enrollments')
+                        ->where('user_id', (int) $user['id'])
+                        ->where('course_id', (int) $course['id'])
+                        ->countAllResults();
 
-                    // Auto-enroll student in course after payment
-                    try {
-                        $db = \Config\Database::connect();
-                        $alreadyEnrolled = $db->table('enrollments')
-                            ->where('user_id', (int) $user['id'])
-                            ->where('course_id', (int) $course['id'])
-                            ->countAllResults();
-                        if (!$alreadyEnrolled) {
-                            $db->table('enrollments')->insert([
-                                'user_id'          => (int) $user['id'],
-                                'course_id'        => (int) $course['id'],
-                                'enrolled_at'      => date('Y-m-d H:i:s'),
-                                'progress_percent' => 0,
-                                'status'           => 'active',
-                            ]);
-                            log_message('info', 'Auto-enrolled user=' . $user['id'] . ' in course=' . $course['id']);
-                        }
-                    } catch (\Throwable $e) {
-                        log_message('error', 'Auto-enroll failed: ' . $e->getMessage());
+                    if (!$alreadyEnrolled) {
+                        $db->table('enrollments')->insert([
+                            'user_id'          => (int) $user['id'],
+                            'course_id'        => (int) $course['id'],
+                            'enrolled_at'      => date('Y-m-d H:i:s'),
+                            'progress_percent' => 0,
+                            'status'           => 'active',
+                        ]);
                     }
 
+                    $score       = (int) ($paymentContext['quiz_score'] ?? 0);
+                    $total       = (int) ($paymentContext['quiz_total'] ?? 10);
                     $certificate = $certService->generateIfNotExists((int) $user['id'], (int) $course['id'], $score, $total);
 
                     if ($certificate && is_array($certificate)) {
@@ -223,79 +211,10 @@ class UserActivationService
                     log_message('warning', 'Course not found for certificate: ' . $courseName);
                 }
             } catch (\Throwable $e) {
-                log_message('error', 'Certificate generation failed (activation continues): ' . $e->getMessage());
+                log_message('error', 'Certificate generation failed: ' . $e->getMessage());
             }
         }
 
         return ['ok' => true, 'payload' => $payload];
-    }
-
-    /**
-     * @return array{sent: bool, error?: string}
-     */
-    private function sendActivationCredentialsEmail(
-        string $toEmail,
-        string $tempPassword,
-        string $mainLoginUrl,
-        string $normalLoginUrl
-    ): array {
-        $config = config('Email');
-        $from   = $config->fromEmail ?? '';
-
-        if ($from === '' || !filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            log_message('error', 'Activation email skipped: set email.fromEmail in .env');
-            return ['sent' => false, 'error' => 'email_from_not_configured'];
-        }
-        if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
-            return ['sent' => false, 'error' => 'invalid_recipient'];
-        }
-
-        $fromName      = $config->fromName !== '' ? $config->fromName : 'Corso E-Learning';
-        $safeEmail     = htmlspecialchars($toEmail,       ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $safePass      = htmlspecialchars($tempPassword,  ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $safeMainUrl   = htmlspecialchars($mainLoginUrl,  ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $safeNormalUrl = htmlspecialchars($normalLoginUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-        $plain  = "Hello,\r\n\r\n";
-        $plain .= "Thank you for your payment. Your Corso E-Learning account is ready.\r\n\r\n";
-        $plain .= "SIGN IN:\r\n{$mainLoginUrl}\r\n\r\n";
-        $plain .= "Email: {$toEmail}\r\nTemporary password: {$tempPassword}\r\n\r\n";
-        $plain .= "After sign in, you will be asked to set a new password.\r\n\r\n";
-        $plain .= "Future sign-ins:\r\n{$normalLoginUrl}\r\n\r\n— Corso E-Learning\r\n";
-
-        $html  = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:system-ui,Segoe UI,sans-serif;line-height:1.55;color:#1a1a1a;">';
-        $html .= '<p>Hello,</p>';
-        $html .= '<p>Thank you for your payment. Your <strong>Corso E-Learning</strong> account is ready.</p>';
-        $html .= '<h2 style="font-size:1rem;margin:24px 0 8px;">Sign in</h2>';
-        $html .= '<p><a href="' . $safeMainUrl . '" style="display:inline-block;padding:10px 18px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;">Open sign in</a></p>';
-        $html .= '<table style="margin:16px 0;border-collapse:collapse;">';
-        $html .= '<tr><td style="padding:4px 12px 4px 0;color:#555;">Email</td><td><strong>' . $safeEmail . '</strong></td></tr>';
-        $html .= '<tr><td style="padding:4px 12px 4px 0;color:#555;">Temporary password</td><td><strong>' . $safePass . '</strong></td></tr>';
-        $html .= '</table>';
-        $html .= '<p style="font-size:0.9rem;color:#555;">After sign in you will set a new password.</p>';
-        $html .= '<h2 style="font-size:1rem;margin:24px 0 8px;">Future sign-ins</h2>';
-        $html .= '<p><a href="' . $safeNormalUrl . '">' . $safeNormalUrl . '</a></p>';
-        $html .= '<p style="margin-top:28px;font-size:0.85rem;color:#666;">— Corso E-Learning</p>';
-        $html .= '</body></html>';
-
-        $emailSvc = \Config\Services::email();
-        $emailSvc->setFrom($from, $fromName);
-        $emailSvc->setTo($toEmail);
-        $emailSvc->setSubject('Your Corso account — login details');
-        $emailSvc->setMailType('html');
-        $emailSvc->setMessage($html);
-        $emailSvc->setAltMessage($plain);
-
-        try {
-            if (!$emailSvc->send()) {
-                log_message('error', 'Activation email send failed: ' . $emailSvc->printDebugger(['headers']));
-                return ['sent' => false, 'error' => 'send_failed'];
-            }
-        } catch (\Throwable $e) {
-            log_message('error', 'Activation email exception: ' . $e->getMessage());
-            return ['sent' => false, 'error' => 'send_exception'];
-        }
-
-        return ['sent' => true];
     }
 }
